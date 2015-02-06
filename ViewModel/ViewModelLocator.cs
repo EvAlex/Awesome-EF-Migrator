@@ -48,9 +48,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			SimpleIoc.Default.Register<MainViewModel>();
 			SimpleIoc.Default.Register<ConnectionDialogViewModel>();
+			SimpleIoc.Default.Register<ErrorDialogViewModel>();
 
 			SimpleIoc.Default.Register<IConnectionDialog>(() => new ConnectionDialog());
-        }
+			SimpleIoc.Default.Register<IErrorDialog>(() => new ErrorDialog());
+		}
 
         public MainViewModel Main
         {
@@ -61,8 +63,13 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		{
 			get { return GetInstance<ConnectionDialogViewModel>(); }
 		}
-        
-        public static void Cleanup()
+
+		public ErrorDialogViewModel ErrorDialog
+		{
+			get { return GetInstance<ErrorDialogViewModel>(); }
+		}
+
+		public static void Cleanup()
         {
             // TODO Clear the ViewModels
         }

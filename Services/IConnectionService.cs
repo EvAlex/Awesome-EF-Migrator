@@ -24,8 +24,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 
 		IReadOnlyCollection<Connection> ActiveConnections { get; }
 
-		void Connect(string dataSource);
+		ConnectResult Connect(string dataSource);
 
-		void Connect(string dataSource, string username, string password);
+		ConnectResult Connect(string dataSource, string username, string password);
 	}
 }

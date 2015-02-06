@@ -20,6 +20,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using PoliceSoft.Aquas.Model.Initializer.Views;
 using GalaSoft.MvvmLight.Messaging;
 using PoliceSoft.Aquas.Model.Initializer.Messages;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -118,13 +119,21 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		private void Connect(PasswordBox passwordBox)
 		{
 			string dataSource = SelectedConnection == null ? NewDataSource : SelectedConnection.DbConnection.DataSource;
+			ConnectResult connectResult;
 
 			if (SelectedAuthenticationMode.Type == AuthenticationType.SqlServerAuthentication)
-				connectionService.Connect(dataSource, Username, passwordBox.Password);
+				connectResult = connectionService.Connect(dataSource, Username, passwordBox.Password);
 			else
-				connectionService.Connect(dataSource);
+				connectResult = connectionService.Connect(dataSource);
 
-			MessengerInstance.Send(new DialogClosedMessage<IConnectionDialog>());
+			if (connectResult.Success)
+				MessengerInstance.Send(new DialogClosedMessage<IConnectionDialog>());
+			else
+			{
+				var errorDialog = SimpleIoc.Default.GetInstance<IErrorDialog>();
+				errorDialog.Show();
+				MessengerInstance.Send(new ErrorMessage("Failed to connect to database. See exception details below.", connectResult.Exception));
+			}
         }
 	}
 }

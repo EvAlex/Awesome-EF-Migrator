@@ -41,7 +41,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 				() => TryConnect(conn))));
 		}
 
-		private void TryConnect(Connection connection)
+		private ConnectResult TryConnect(Connection connection)
 		{
 			try
 			{
@@ -52,9 +52,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 					RaiseNewConnection(connection);
 				}
 				RaiseConnected(connection);
+				return new ConnectResult(null);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				return new ConnectResult(ex);
 			}
 		}
 
@@ -81,16 +83,16 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 			}
 		}
 
-		public void Connect(string dataSource)
+		public ConnectResult Connect(string dataSource)
 		{
 			var connection = new Connection(PrepareDbConnection(dataSource), DataSourcePriority.UserAdded);
-			TryConnect(connection);
+			return TryConnect(connection);
 		}
 
-		public void Connect(string dataSource, string username, string password)
+		public ConnectResult Connect(string dataSource, string username, string password)
 		{
 			var connection = new Connection(PrepareDbConnection(dataSource, username, password), DataSourcePriority.UserAdded);
-			TryConnect(connection);
+			return TryConnect(connection);
 		}
 
 		public IReadOnlyCollection<Connection> ActiveConnections
