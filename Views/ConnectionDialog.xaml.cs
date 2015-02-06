@@ -17,7 +17,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Views
 	/// <summary>
 	/// Interaction logic for ConnectionDialog.xaml
 	/// </summary>
-	public partial class ConnectionDialog : Window
+	public partial class ConnectionDialog : Window, IConnectionDialog
 	{
 		public ConnectionDialog()
 		{

@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using PoliceSoft.Aquas.Model.Initializer.Services;
+using PoliceSoft.Aquas.Model.Initializer.Views;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -47,6 +48,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			SimpleIoc.Default.Register<MainViewModel>();
 			SimpleIoc.Default.Register<ConnectionDialogViewModel>();
+
+			SimpleIoc.Default.Register<IConnectionDialog>(() => new ConnectionDialog());
         }
 
         public MainViewModel Main

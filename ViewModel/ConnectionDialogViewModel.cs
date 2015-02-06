@@ -17,6 +17,9 @@ using PoliceSoft.Aquas.Model.Initializer.Services;
 using PoliceSoft.Wpf;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
+using PoliceSoft.Aquas.Model.Initializer.Views;
+using GalaSoft.MvvmLight.Messaging;
+using PoliceSoft.Aquas.Model.Initializer.Messages;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -108,6 +111,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 				connectionService.Connect(dataSource, Username, passwordBox.Password);
 			else
 				connectionService.Connect(dataSource);
-		}
+
+			MessengerInstance.Send(new DialogClosedMessage<IConnectionDialog>());
+        }
 	}
 }

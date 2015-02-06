@@ -14,6 +14,8 @@ using System.Windows.Controls;
 using PoliceSoft.Aquas.Model.Initializer.Views;
 using PoliceSoft.Aquas.Model.Initializer.Services;
 using System.Collections.ObjectModel;
+using GalaSoft.MvvmLight.Ioc;
+using PoliceSoft.Aquas.Model.Initializer.Messages;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -64,7 +66,9 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void OpenConnectDialog()
 		{
-			new ConnectionDialog().ShowDialog();
+			var connectionDialog = SimpleIoc.Default.GetInstance<IConnectionDialog>(Guid.NewGuid().ToString());
+			MessengerInstance.Register<DialogClosedMessage<IConnectionDialog>>(this, msg => connectionDialog.Close());
+			connectionDialog.ShowDialog();
         }
 	}
 }
