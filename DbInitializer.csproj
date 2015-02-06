@@ -37,6 +37,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CalcBinding">
+      <HintPath>..\packages\CalcBinding.2.1.2.0\lib\net45\CalcBinding.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicExpresso.Core">
+      <HintPath>..\packages\DynamicExpresso.Core.1.1.0.0\lib\net40\DynamicExpresso.Core.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
@@ -83,8 +89,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Messages\DialogClosedMessage.cs" />
+    <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Models\AuthenticationMode.cs" />
     <Compile Include="Models\AuthenticationType.cs" />
+    <Compile Include="Models\ConnectResult.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Connection.cs" />
     <Compile Include="Models\DataSourcePriority.cs" />
@@ -93,12 +101,19 @@
     <Compile Include="Services\IConnectionService.cs" />
     <Compile Include="Services\SqlServerConnectionService.cs" />
     <Compile Include="ViewModel\ConnectionDialogViewModel.cs" />
+    <Compile Include="ViewModel\ErrorDialogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ErrorDialog.xaml.cs">
+      <DependentUpon>ErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\IConnectionDialog.cs" />
+    <Compile Include="Views\IDialog.cs" />
+    <Compile Include="Views\IErrorDialog.cs" />
+    <Compile Include="Views\IWindow.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -115,6 +130,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\ConnectionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ErrorDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
