@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Model.Initializer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Database Initializer" Height="350" Width="525"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
-        
+        <Button Command="{Binding OpenConnectDialogCommand}" 
+                HorizontalAlignment="Left" VerticalAlignment="Top">Connect</Button>
     </Grid>
 </Window>
