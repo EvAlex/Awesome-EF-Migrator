@@ -31,6 +31,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		{
 			this.connectionService = connectionService;
 			availableConnections = new ObservableCollection<Connection>(connectionService.ActiveConnections);
+				SelectConnectionWithHighestPriority();
             this.connectionService.NewConnection += OnNewConnection;
 
 			AvailableConnections = CollectionViewSource.GetDefaultView(availableConnections);
@@ -51,10 +52,16 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			availableConnections.Add(connection);
 			if (!userSelectedConnection)
 			{
-				selectedConnection = availableConnections.OrderByDescending(i => i.Priority).First();
-				RaisePropertyChanged(() => SelectedConnection);
+				SelectConnectionWithHighestPriority();
 			}
 		}
+
+		private void SelectConnectionWithHighestPriority()
+		{
+			selectedConnection = availableConnections.OrderByDescending(i => i.Priority).First();
+			RaisePropertyChanged(() => SelectedConnection);
+			NewDataSource = selectedConnection.DbConnection.DataSource;
+        }
 
 		public ICollectionView AvailableConnections { get; private set; }
 		public ObservableCollection<Connection> availableConnections;
@@ -86,7 +93,12 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		}
 		private AuthenticationMode selectedAuthenticationMode;
 
-		public string NewDataSource { get; set; }
+		public string NewDataSource
+		{
+			get { return newDataSource; }
+			set { Set(ref newDataSource, value); }
+		}
+		public string newDataSource;
 
 
 		public bool SqlServerAuthenticationModeSelected
