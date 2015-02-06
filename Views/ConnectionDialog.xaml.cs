@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using PoliceSoft.Aquas.Model.Initializer.ViewModel;
 
 namespace PoliceSoft.Aquas.Model.Initializer.Views
 {
@@ -22,6 +23,12 @@ namespace PoliceSoft.Aquas.Model.Initializer.Views
 		public ConnectionDialog()
 		{
 			InitializeComponent();
+		}
+
+		private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (DataContext is ConnectionDialogViewModel)
+				(DataContext as ConnectionDialogViewModel).DialogClosingCommand.Execute(null);
 		}
 	}
 }

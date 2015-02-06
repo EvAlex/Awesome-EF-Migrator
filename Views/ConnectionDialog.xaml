@@ -4,15 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PoliceSoft.Aquas.Model.Initializer.Views"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         Title="Connect to Database" Height="225" Width="400"
-        DataContext="{Binding ConnectionDialog, Source={StaticResource Locator}}">
+        DataContext="{Binding ConnectionDialog, Source={StaticResource Locator}}" Closing="OnClosing">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -60,10 +62,21 @@
         <PasswordBox Name="UserPassword"
 					 IsEnabled="{Binding SqlServerAuthenticationModeSelected, Mode=OneWay}"
 					 Grid.Row="3" Grid.Column="1"></PasswordBox>
-        
-        <Button Command="{Binding ConnectCommand}" 
-                CommandParameter="{Binding ElementName=UserPassword}" 
-                IsDefault="True"
-                Grid.Column="1" Grid.Row="4" Margin="0,5">Connect</Button>
+
+        <Grid Grid.Column="1" Grid.Row="4" Margin="0,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding ConnectCommand}" 
+					CommandParameter="{Binding ElementName=UserPassword}" 
+					IsDefault="True"
+					Margin="0,0,5,0">Connect</Button>
+            <Button Command="{Binding CancelCommand}" 
+					IsCancel="True"
+					Grid.Column="1" Margin="5,0,0,0">Cancel</Button>
+        </Grid>
+
+        <ProgressBar Visibility="{c:Binding ConnectInProgress}" IsIndeterminate="True" Height="4" Grid.Row="5" Grid.Column="1"/>
     </Grid>
 </Window>

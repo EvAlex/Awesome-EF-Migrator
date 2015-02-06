@@ -21,6 +21,7 @@ using PoliceSoft.Aquas.Model.Initializer.Views;
 using GalaSoft.MvvmLight.Messaging;
 using PoliceSoft.Aquas.Model.Initializer.Messages;
 using GalaSoft.MvvmLight.Ioc;
+using System.Threading;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -32,8 +33,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		{
 			this.connectionService = connectionService;
 			availableConnections = new ObservableCollection<Connection>(connectionService.ActiveConnections);
-				SelectConnectionWithHighestPriority();
-            this.connectionService.NewConnection += OnNewConnection;
+			SelectConnectionWithHighestPriority();
+			this.connectionService.NewConnection += OnNewConnection;
 
 			AvailableConnections = CollectionViewSource.GetDefaultView(availableConnections);
 			AvailableConnections.SortDescriptions.Add(new SortDescription("Priority", ListSortDirection.Descending));
@@ -46,7 +47,9 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			selectedAuthenticationMode = AuthenticationModes.First();
 
 			ConnectCommand = new RelayCommand<PasswordBox>(Connect, CanConnect);
-		}
+			CancelCommand = new RelayCommand(Cancel, CanCancel);
+			DialogClosingCommand = new RelayCommand(() => { if (ConnectInProgress) Cancel(); });
+        }
 
 		private void OnNewConnection(Connection connection)
 		{
@@ -62,7 +65,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			selectedConnection = availableConnections.OrderByDescending(i => i.Priority).First();
 			RaisePropertyChanged(() => SelectedConnection);
 			NewDataSource = selectedConnection.DbConnection.DataSource;
-        }
+		}
 
 		public ICollectionView AvailableConnections { get; private set; }
 		public ObservableCollection<Connection> availableConnections;
@@ -109,31 +112,66 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		public string Username { get; set; }
 
+		public bool ConnectInProgress
+		{
+			get { return connectInProgress; }
+			set { Set(ref connectInProgress, value); }
+		}
+		private bool connectInProgress;
+
+		private CancellationTokenSource taskCancellationTokenSource;
+
 		public RelayCommand<PasswordBox> ConnectCommand { get; private set; }
+
+		public RelayCommand CancelCommand { get; private set; }
+
+		public RelayCommand DialogClosingCommand { get; private set; }
 
 		private bool CanConnect(PasswordBox passwordBox)
 		{
-			return true;
+			return !ConnectInProgress;
 		}
 
 		private void Connect(PasswordBox passwordBox)
 		{
 			string dataSource = SelectedConnection == null ? NewDataSource : SelectedConnection.DbConnection.DataSource;
-			ConnectResult connectResult;
+			Task<ConnectResult> task;
+			taskCancellationTokenSource = new CancellationTokenSource();
+			var token = taskCancellationTokenSource.Token;
 
 			if (SelectedAuthenticationMode.Type == AuthenticationType.SqlServerAuthentication)
-				connectResult = connectionService.Connect(dataSource, Username, passwordBox.Password);
+				task = Task.Factory.StartNew(() => connectionService.Connect(dataSource, Username, passwordBox.Password), token);
 			else
-				connectResult = connectionService.Connect(dataSource);
+				task = Task.Factory.StartNew(() => connectionService.Connect(dataSource), token);
+			
+			ConnectInProgress = true;
+            task.ContinueWith(
+				t =>
+				{
+					if (token.IsCancellationRequested)
+						return;
+					if (t.Result.Success)
+						MessengerInstance.Send(new DialogClosedMessage<IConnectionDialog>());
+					else
+					{
+						var errorDialog = SimpleIoc.Default.GetInstance<IErrorDialog>(Guid.NewGuid().ToString());
+						errorDialog.Show();
+						MessengerInstance.Send(new ErrorMessage("Failed to connect to database. See exception details below.", t.Result.Exception));
+					}
+					ConnectInProgress = false;
+                }, TaskScheduler.FromCurrentSynchronizationContext());			
+		}
 
-			if (connectResult.Success)
-				MessengerInstance.Send(new DialogClosedMessage<IConnectionDialog>());
-			else
-			{
-				var errorDialog = SimpleIoc.Default.GetInstance<IErrorDialog>();
-				errorDialog.Show();
-				MessengerInstance.Send(new ErrorMessage("Failed to connect to database. See exception details below.", connectResult.Exception));
-			}
+		private bool CanCancel()
+		{
+			return ConnectInProgress;
+		}
+
+		private void Cancel()
+		{
+			if (taskCancellationTokenSource != null)
+				taskCancellationTokenSource.Cancel();
+			ConnectInProgress = false;
         }
 	}
 }
