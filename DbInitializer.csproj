@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Messages\DialogClosedMessage.cs" />
     <Compile Include="Models\AuthenticationMode.cs" />
     <Compile Include="Models\AuthenticationType.cs" />
     <Compile Include="Models\Database.cs" />
@@ -89,7 +90,6 @@
     <Compile Include="Models\DataSourcePriority.cs" />
     <Compile Include="Models\Migration.cs" />
     <Compile Include="Models\MigrationState.cs" />
-    <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\IConnectionService.cs" />
     <Compile Include="Services\SqlServerConnectionService.cs" />
     <Compile Include="ViewModel\ConnectionDialogViewModel.cs" />
@@ -98,6 +98,7 @@
     <Compile Include="Views\ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\IConnectionDialog.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
