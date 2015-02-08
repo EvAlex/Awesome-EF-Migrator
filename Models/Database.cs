@@ -11,6 +11,16 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 {
 	public class Database : ObservableObject
 	{
+		public Database(string name, ICollection<DatabaseTable> tables)
+		{
+			Name = name;
+			Tables = tables;
+        }
+
+		public string Name { get; private set; }
+
+		public ICollection<DatabaseTable> Tables { get; private set; }
+
 		public Database(Type dbContextType)
 		{
 			var dbMigrationsConfigType = dbContextType.Assembly
@@ -31,5 +41,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 		}
 
 		public ObservableCollection<Migration> Migrations { get; private set; }
+
+		public override string ToString()
+		{
+			return Name;
+		}
 	}
 }

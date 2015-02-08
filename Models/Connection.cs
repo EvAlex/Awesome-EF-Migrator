@@ -17,10 +17,13 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 		{
 			DbConnection = dbConnection;
 			Priority = priority;
+			Databases = new List<Database>();
 		}
 
 		public DbConnection DbConnection { get; private set; }
 
 		public DataSourcePriority Priority { get; private set; }
+
+		public ICollection<Database> Databases { get; set; }
 	}
 }
