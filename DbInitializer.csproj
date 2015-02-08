@@ -96,11 +96,16 @@
     <Compile Include="Models\ConnectResult.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\Connection.cs" />
+    <Compile Include="Models\DatabaseTable.cs" />
     <Compile Include="Models\DataSourcePriority.cs" />
+    <Compile Include="Models\DbType.cs" />
     <Compile Include="Models\Migration.cs" />
     <Compile Include="Models\MigrationState.cs" />
+    <Compile Include="Models\TableColumn.cs" />
     <Compile Include="Services\IConnectionService.cs" />
+    <Compile Include="Services\IDbAnalyzerService.cs" />
     <Compile Include="Services\SqlServerConnectionService.cs" />
+    <Compile Include="Services\SqlServerDbAnalyzerService.cs" />
     <Compile Include="ViewModel\ConnectionDialogViewModel.cs" />
     <Compile Include="ViewModel\ErrorDialogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

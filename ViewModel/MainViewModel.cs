@@ -34,11 +34,12 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
     public class MainViewModel : ViewModelBase
     {
 		private readonly IConnectionService connectionService;
+		private readonly IDbAnalyzerService dbAnalyzer;
 
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel(IConnectionService connectionService)
+		public MainViewModel(IConnectionService connectionService, IDbAnalyzerService dbAnalyzer)
         {
 			if (IsInDesignMode)
 			{
@@ -48,12 +49,23 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			{
 				// Code runs "for real"
 
-				Database = new Database(typeof(AquasDb));
+				//Database = new Database(typeof(AquasDb));
 			}
 
 			this.connectionService = connectionService;
+			this.dbAnalyzer = dbAnalyzer;
+
 			Connections = new ObservableCollection<Connection>(connectionService.ActiveConnections);
-			this.connectionService.NewConnection += c => Connections.Add(c);
+			foreach (var c in Connections)
+			{
+				OnNewConnection(c);
+			}
+			this.connectionService.NewConnection +=
+				c =>
+				{
+					OnNewConnection(c);
+					Connections.Add(c);
+				};
 
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
         }
@@ -63,6 +75,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		public ObservableCollection<Connection> Connections { get; private set; }
 
 		public RelayCommand OpenConnectDialogCommand { get; private set; }
+
+		private void OnNewConnection(Connection connection)
+		{
+			connection.Databases = dbAnalyzer.GetDatabases(connection);
+		}
 
 		private void OpenConnectDialog()
 		{
