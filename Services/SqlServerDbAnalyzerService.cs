@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.Entity.Migrations.History;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 		private List<Database> GetDatabases(DbConnection dbConnection)
 		{
 			return GetDatabaseNames(dbConnection)
-				.Select(n => new Database(n, GetDatabaseTables(dbConnection, n)))
+				.Select(n => new Database(n, dbConnection, GetDatabaseTables(dbConnection, n)))
 				.ToList();
 		}
 
