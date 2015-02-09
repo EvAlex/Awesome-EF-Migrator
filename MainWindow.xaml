@@ -135,7 +135,7 @@
                     Create
                 </Button>
                 
-                <ProgressBar Visibility="{c:Binding CreateDatabaseCommand.InProgress}" IsIndeterminate="True" Height="1" Grid.Row="3" Grid.Column="1"/>
+                <ProgressBar Visibility="{c:Binding CreateDatabaseCommand.InProgress}" IsIndeterminate="True" Height="3" Grid.Row="3" Grid.Column="1"/>
             </Grid>
         </HeaderedContentControl>
 

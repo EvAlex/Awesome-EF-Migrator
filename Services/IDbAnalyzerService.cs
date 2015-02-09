@@ -11,5 +11,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 	public interface IDbAnalyzerService
 	{
 		List<Database> GetDatabases(Connection connection);
+
+		Database GetDatabase(Connection connection, string dbName);
 	}
 }
