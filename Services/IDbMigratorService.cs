@@ -16,6 +16,6 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 
 		bool DatabaseHasMigrationsFor(Database database, DbMigrationsConfiguration dbMigrationsConfig);
 
-		void UpdateDatabase(Database database);
+		void UpdateDatabase(Database database, DbMigrationsConfiguration dbMigrationsConfig);
 	}
 }

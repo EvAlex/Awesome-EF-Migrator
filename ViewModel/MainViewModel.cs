@@ -67,7 +67,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
 			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
 			UpdateCommand = new RelayCommand<Database>(UpdateDatabase, CanUpdateDatabase);
-		}
+			CreateDatabaseCommand = new RelayCommand<string>(CreateDatabase, CanCreateDatabase);
+        }
 
 		private void InitializeConnections()
 		{
@@ -94,19 +95,38 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		public ICollectionView ConnectionsView { get; private set; }
 
 
+		public Connection SelectedConnection
+		{
+			get { return selectedConnection; }
+			set { Set(ref selectedConnection, value); }
+		}
+		private Connection selectedConnection;
+
 		public Database SelectedDatabase
 		{
 			get { return selectedDatabse; }
 			set { Set(ref selectedDatabse, value); }
 		}
 		private Database selectedDatabse;
-
-
+		
+		public string NewDatabaseName
+		{
+			get { return newDatabaseName; }
+			set
+			{
+				Set(ref newDatabaseName, value);
+				CreateDatabaseCommand.RaiseCanExecuteChanged();
+			}
+		}
+		private string newDatabaseName;
+		
 		public RelayCommand OpenConnectDialogCommand { get; private set; }
 
 		public RelayCommand<string> CopyCommand { get; private set; }
 
 		public RelayCommand<Database> UpdateCommand { get; private set; }
+
+		public RelayCommand<string> CreateDatabaseCommand { get; private set; }
 
 		/// <summary>
 		/// Indicates that satate is being analyzed for <see cref="SelectedDatabase"/>
@@ -121,7 +141,14 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void OnNewConnection(Connection connection)
 		{
-			connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
+			connection.Selected +=
+				c =>
+				{
+					SelectedConnection = c as Connection;
+					SelectedDatabase = null;
+					NewDatabaseName = dbContextType.Name;
+				};
+            connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
 
 			Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
 				.ContinueWith(
@@ -144,6 +171,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void OnDatabaseSelected(TreeViewItemModel db)
 		{
+			SelectedConnection = null;
 			SelectedDatabase = db as Database;
 			AnalyzingDbState = true;
 
@@ -176,12 +204,22 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void UpdateDatabase(Database database)
 		{
-			dbMigrator.UpdateDatabase(database);
+			dbMigrator.UpdateDatabase(database, dbMigrator.GetMigrationsConfiguration(dbContextType));
 		}
 
 		private bool CanUpdateDatabase(Database database)
 		{
 			return database.HasPendingMigrations;
 		}
+
+		private void CreateDatabase(string dbName)
+		{
+			UpdateDatabase(new Database(dbName, SelectedConnection.DbConnection, null));
+        }
+
+		private bool CanCreateDatabase(string dbName)
+		{
+			return SelectedConnection != null && !SelectedConnection.Databases.Any(d => d.Name == dbName);
+        }
 	}
 }
