@@ -27,9 +27,9 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
 
         <HeaderedContentControl>
@@ -96,5 +96,57 @@
         </HeaderedContentControl>
 
         <GridSplitter Grid.Column="1" Grid.RowSpan="100" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+
+        <HeaderedContentControl Grid.Column="2">
+            <HeaderedContentControl.Header>
+                <TextBlock Text="{Binding SelectedDatabase.Name}" FontSize="14" Margin="3"/>
+            </HeaderedContentControl.Header>
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin" Value="0,0,5,3"/>
+                        </Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Grid.Column" Value="1"/>
+                            <Setter Property="IsReadOnly" Value="True"/>
+                            <Setter Property="Margin" Value="0,0,0,3"/>
+                        </Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="0,0,0,3"/>                            
+                        </Style>
+                    </Grid.Resources>
+
+                    <TextBlock>Data Source</TextBlock>
+                    <TextBox Text="{Binding SelectedDatabase.DbConnection.DataSource, Mode=OneWay}"/>
+
+                    <TextBlock Grid.Row="1">Connection String</TextBlock>
+                    <TextBox Text="{Binding SelectedDatabase.ConnectionString, Mode=OneWay}"  Grid.Row="1"/>
+                    <Button Command="{Binding CopyCommand}" CommandParameter="{Binding SelectedDatabase.ConnectionString}" Grid.Column="2" Grid.Row="1">
+                        <Button.ToolTip>Copy</Button.ToolTip>
+                        <Image Source="copy.png" Stretch="None"/>
+                    </Button>
+                </Grid>
+                
+                <Grid Grid.Row="1"></Grid>
+                
+            </Grid>
+        </HeaderedContentControl>
     </Grid>
 </Window>

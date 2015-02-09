@@ -19,6 +19,7 @@ using PoliceSoft.Aquas.Model.Initializer.Messages;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -64,6 +65,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			InitializeConnections();
 
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
+			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
         }
 
 		private void InitializeConnections()
@@ -90,7 +92,18 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		public ICollectionView ConnectionsView { get; private set; }
 
+
+		public Database SelectedDatabase
+		{
+			get { return selectedDatabse; }
+			set { Set(ref selectedDatabse, value); }
+		}
+		private Database selectedDatabse;
+
+
 		public RelayCommand OpenConnectDialogCommand { get; private set; }
+
+		public RelayCommand<string> CopyCommand { get; private set; }
 
 		private void OnNewConnection(Connection connection)
 		{
@@ -103,6 +116,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					foreach (var d in t.Result)
 					{
 						connection.Databases.Add(d);
+						d.Selected += OnDatabaseSelected;
                     }
 
 					connection.IsExpanded = true;
@@ -113,6 +127,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
+
+		private void OnDatabaseSelected(TreeViewItemModel db)
+		{
+			SelectedDatabase = db as Database;
+        }
 
 		private bool ShouldShowDatabase(Database database)
 		{

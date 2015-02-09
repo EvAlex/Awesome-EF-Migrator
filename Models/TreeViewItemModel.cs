@@ -16,6 +16,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 			set
 			{
 				Set(ref isSelected, value);
+				if (isSelected)
+					RaiseSelected();
 			}
 		}
 		private bool isSelected;
@@ -29,5 +31,15 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 			}
 		}
 		private bool isExpanded;
+
+		private void RaiseSelected()
+		{
+			var temp = Selected;
+			if (temp != null)
+			{
+				temp(this);
+			}
+		}
+		public event Action<TreeViewItemModel> Selected;
 	}
 }

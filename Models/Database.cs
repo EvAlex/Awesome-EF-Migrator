@@ -31,6 +31,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 
 		public DbConnection DbConnection { get; private set; }
 
+		public string ConnectionString
+		{
+			get { return string.Format("{0} Initial Catalog = {1};", DbConnection.ConnectionString, Name); }
+		}
 
 		//public Database(Type dbContextType)
 		//{
