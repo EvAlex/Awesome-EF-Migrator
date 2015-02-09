@@ -1,6 +1,6 @@
 ﻿namespace PoliceSoft.Aquas.Model.Initializer.Models
 {
-	public class TableColumn
+	public class TableColumn : TreeViewItemModel
 	{
 		public TableColumn(string name, DbType type)
 		{

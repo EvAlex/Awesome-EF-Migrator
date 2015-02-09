@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PoliceSoft.Aquas.Model.Initializer.Models
 {
-	public class DatabaseTable
+	public class DatabaseTable : TreeViewItemModel
 	{
 		public DatabaseTable(string name, string schemaName)
 			: this(schemaName + "." + name)

@@ -102,13 +102,17 @@
     <Compile Include="Models\Migration.cs" />
     <Compile Include="Models\MigrationState.cs" />
     <Compile Include="Models\TableColumn.cs" />
+    <Compile Include="Models\TreeViewItemModel.cs" />
+    <Compile Include="Services\DbMigratorService.cs" />
     <Compile Include="Services\IConnectionService.cs" />
     <Compile Include="Services\IDbAnalyzerService.cs" />
+    <Compile Include="Services\IDbMigratorService.cs" />
     <Compile Include="Services\SqlServerConnectionService.cs" />
     <Compile Include="Services\SqlServerDbAnalyzerService.cs" />
     <Compile Include="ViewModel\ConnectionDialogViewModel.cs" />
     <Compile Include="ViewModel\ErrorDialogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\TreeViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\ConnectionDialog.xaml.cs">
       <DependentUpon>ConnectionDialog.xaml</DependentUpon>

@@ -38,11 +38,15 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
     {
 		private readonly IConnectionService connectionService;
 		private readonly IDbAnalyzerService dbAnalyzer;
+		private readonly IDbMigratorService dbMigrator;
+
+		private readonly Type dbContextType = typeof(AquasDb);
+		private readonly DbMigrationsConfiguration dbMigrationsConfiguration;
 
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel(IConnectionService connectionService, IDbAnalyzerService dbAnalyzer)
+		public MainViewModel(IConnectionService connectionService, IDbAnalyzerService dbAnalyzer, IDbMigratorService dbMigrator)
         {
 			if (IsInDesignMode)
 			{
@@ -51,12 +55,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			else
 			{
 				// Code runs "for real"
-
-				//Database = new Database(typeof(AquasDb));
 			}
 
 			this.connectionService = connectionService;
 			this.dbAnalyzer = dbAnalyzer;
+			this.dbMigrator = dbMigrator;
 
 			InitializeConnections();
 
@@ -91,6 +94,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void OnNewConnection(Connection connection)
 		{
+			connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
+
             Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
 				.ContinueWith(
 				t =>
@@ -98,8 +103,22 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					foreach (var d in t.Result)
 					{
 						connection.Databases.Add(d);
+                    }
+
+					connection.IsExpanded = true;
+                    foreach (var d in connection.DatabasesView)
+					{
+						(d as Database).IsSelected = true;
+						break;
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private bool ShouldShowDatabase(Database database)
+		{
+			return database.HasMigrationHistory &&
+				(!database.MigrationHistoryRows.Any() ||
+				 dbMigrator.DatabaseHasMigrationsFor(database, dbMigrator.GetMigrationsConfiguration(dbContextType)));
 		}
 
 		private void OpenConnectDialog()
