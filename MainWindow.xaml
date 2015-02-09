@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Model.Initializer"
         xmlns:models="clr-namespace:PoliceSoft.Aquas.Model.Initializer.Models"
+        xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         Title="Database Initializer" Height="450" Width="800" WindowStartupLocation="CenterScreen"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
@@ -53,19 +54,19 @@
             </HeaderedContentControl.Header>
             <HeaderedContentControl.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type models:Connection}" 
-                                          ItemsSource="{Binding Databases}">
+                                          ItemsSource="{Binding DatabasesView}">
                     <TextBlock Text="{Binding DbConnection.DataSource}" Margin="0,0,0,3"/>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:Database}"
                                           ItemsSource="{Binding Tables}">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                    <StackPanel Orientation="Horizontal" Margin="1.5">
                         <Image Source="db.png" Stretch="None"></Image>
                         <TextBlock Text="{Binding Name}" Margin="3,0,0,0"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:DatabaseTable}"
                                           ItemsSource="{Binding Columns}">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                    <StackPanel Orientation="Horizontal" Margin="1.5">
                         <Image Source="table.png" Stretch="None"></Image>
                         <TextBlock Margin="3,0,0,0">
 							<Run>[</Run>
@@ -77,7 +78,7 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type models:TableColumn}">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                    <StackPanel Orientation="Horizontal" Margin="1.5">
                         <Image Source="column.png" Stretch="None"></Image>
                         <TextBlock Text="{Binding}" Margin="3,0,0,0"/>
                     </StackPanel>
@@ -85,6 +86,12 @@
             </HeaderedContentControl.Resources>
 
             <TreeView ItemsSource="{Binding Connections}" BorderThickness="0">
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
             </TreeView>
         </HeaderedContentControl>
 
