@@ -23,7 +23,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 				MigrationHistoryRows = new ObservableCollection<HistoryRow>(GetMigrationHistory());
 
 			Migrations = new ObservableCollection<Migration>();
-		}
+			Migrations.CollectionChanged += (s, e) => RaisePropertyChanged(() => HasPendingMigrations);
+        }
 
 		public string Name { get; private set; }
 
@@ -73,6 +74,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 					   historyTable.Columns.Any(c => c.Name == "Model") &&
 					   historyTable.Columns.Any(c => c.Name == "ProductVersion");
 			}
+		}
+
+		public bool HasPendingMigrations
+		{
+			get { return Migrations.Any(m => m.State == MigrationState.Pending); }
 		}
 
 		private ICollection<HistoryRow> GetMigrationHistory()
