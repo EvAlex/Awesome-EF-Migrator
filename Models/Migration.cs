@@ -20,7 +20,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 			Id = migrationName.Split('_').First();
 			Name = migrationName.Substring(Id.Length + 1);
 			Timestamp = DateTime.ParseExact(Id, MigrationIdFormat, CultureInfo.InvariantCulture);
-		}
+			State = migrationState;
+        }
 
 		public string Id { get; private set; }
 

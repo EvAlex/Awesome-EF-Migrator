@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PoliceSoft.Aquas.Model.Initializer.Views"
         xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
-        Title="Connect to Database" Height="225" Width="400"
+        Title="Connect to Database" Height="225" Width="400" WindowStartupLocation="CenterScreen"
         DataContext="{Binding ConnectionDialog, Source={StaticResource Locator}}" Closing="OnClosing">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
