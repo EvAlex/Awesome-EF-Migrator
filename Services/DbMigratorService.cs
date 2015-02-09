@@ -51,9 +51,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 				   database.MigrationHistoryRows.Any(r => r.ContextKey == dbMigrationsConfig.GetType().FullName);
 		}
 
-		public void UpdateDatabase(Database database)
+		public void UpdateDatabase(Database database, DbMigrationsConfiguration dbMigrationsConfig)
 		{
-			throw new NotImplementedException();
+			dbMigrationsConfig.TargetDatabase = new DbConnectionInfo(database.ConnectionString, "System.Data.SqlClient");	//	TODO providername
+			var migrator = new DbMigrator(dbMigrationsConfig);
+			migrator.Update();
 		}
 	}
 }

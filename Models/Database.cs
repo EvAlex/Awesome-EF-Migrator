@@ -16,7 +16,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 		public Database(string name, DbConnection dbConnection, ICollection<DatabaseTable> tables)
 		{
 			Name = name;
-			Tables = tables;
+			Tables = tables ?? new List<DatabaseTable>();
 			DbConnection = dbConnection;
 
 			if (HasMigrationHistory)
