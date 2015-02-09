@@ -54,20 +54,20 @@
             <HeaderedContentControl.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type models:Connection}" 
                                           ItemsSource="{Binding Databases}">
-                    <TextBlock Text="{Binding DbConnection.DataSource}"/>
+                    <TextBlock Text="{Binding DbConnection.DataSource}" Margin="0,0,0,3"/>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:Database}"
                                           ItemsSource="{Binding Tables}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
                         <Image Source="db.png" Stretch="None"></Image>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" Margin="3,0,0,0"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:DatabaseTable}"
                                           ItemsSource="{Binding Columns}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
                         <Image Source="table.png" Stretch="None"></Image>
-                        <TextBlock>
+                        <TextBlock Margin="3,0,0,0">
 							<Run>[</Run>
 							<Run Text="{Binding Schema, Mode=OneWay}"/>
 							<Run>].[</Run>
@@ -77,9 +77,9 @@
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type models:TableColumn}">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
                         <Image Source="column.png" Stretch="None"></Image>
-                        <TextBlock Text="{Binding}"/>
+                        <TextBlock Text="{Binding}" Margin="3,0,0,0"/>
                     </StackPanel>
                 </DataTemplate>
             </HeaderedContentControl.Resources>
