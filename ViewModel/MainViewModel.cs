@@ -67,7 +67,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
 			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
 			UpdateCommand = new RelayCommand<Database>(UpdateDatabase, CanUpdateDatabase);
-			CreateDatabaseCommand = new AsyncRelayCommand<string>(CreateDatabase, CanCreateDatabase);
+			CreateDatabaseCommand = new AsyncRelayCommand<string, Database>(
+				CreateDatabase,
+				OnDatabaseCreated,
+                CanCreateDatabase);
         }
 
 		private void InitializeConnections()
@@ -126,7 +129,12 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		public RelayCommand<Database> UpdateCommand { get; private set; }
 
-		public AsyncRelayCommand<string> CreateDatabaseCommand { get; private set; }
+		public AsyncRelayCommand<string, Database> CreateDatabaseCommand { get; private set; }
+
+		/// <summary>
+		/// Connection that is currently used to create database
+		/// </summary>
+		private Connection createDbConnection;
 
 		/// <summary>
 		/// Indicates that satate is being analyzed for <see cref="SelectedDatabase"/>
@@ -212,9 +220,19 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			return database.HasPendingMigrations;
 		}
 
-		private void CreateDatabase(string dbName)
+		private Database CreateDatabase(string dbName)
 		{
-			UpdateDatabase(new Database(dbName, SelectedConnection.DbConnection, null));
+			createDbConnection = SelectedConnection;
+            UpdateDatabase(new Database(dbName, createDbConnection.DbConnection, null));
+			return dbAnalyzer.GetDatabase(createDbConnection, dbName);
+		}
+
+		private void OnDatabaseCreated(Database database)
+		{
+			createDbConnection.Databases.Add(database);
+			database.Selected += OnDatabaseSelected;
+			database.IsSelected = true;
+			createDbConnection = null;
         }
 
 		private bool CanCreateDatabase(string dbName)

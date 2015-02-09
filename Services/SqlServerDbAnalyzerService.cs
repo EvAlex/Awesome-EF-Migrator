@@ -19,15 +19,15 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 			if (connection.DbConnection.State != ConnectionState.Open)
 				throw new ArgumentException("Connection state should be Open.", "connection");
 
-			return GetDatabases(connection.DbConnection);
-		}
-
-		private List<Database> GetDatabases(DbConnection dbConnection)
-		{
-			return GetDatabaseNames(dbConnection)
-				.Select(n => new Database(n, dbConnection, GetDatabaseTables(dbConnection, n)))
+			return GetDatabaseNames(connection.DbConnection)
+				.Select(n => GetDatabase(connection, n))
 				.ToList();
 		}
+
+		public Database GetDatabase(Connection connection, string dbName)
+		{
+			return new Database(dbName, connection.DbConnection, GetDatabaseTables(connection.DbConnection, dbName));
+        }
 
 		private ICollection<string> GetDatabaseNames(DbConnection dbConnection)
 		{

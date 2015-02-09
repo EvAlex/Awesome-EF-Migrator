@@ -90,6 +90,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AsyncRelayCommand.cs" />
+    <Compile Include="AsyncRelayCommand`2.cs" />
     <Compile Include="AsyncRelayCommand`.cs" />
     <Compile Include="Messages\DialogClosedMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
