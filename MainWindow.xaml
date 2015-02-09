@@ -122,6 +122,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
                 <TextBlock Grid.ColumnSpan="100" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold">Create New Database</TextBlock>
@@ -133,6 +134,8 @@
                         Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0">
                     Create
                 </Button>
+                
+                <ProgressBar Visibility="{c:Binding CreateDatabaseCommand.InProgress}" IsIndeterminate="True" Height="1" Grid.Row="3" Grid.Column="1"/>
             </Grid>
         </HeaderedContentControl>
 

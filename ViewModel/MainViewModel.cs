@@ -67,7 +67,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
 			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
 			UpdateCommand = new RelayCommand<Database>(UpdateDatabase, CanUpdateDatabase);
-			CreateDatabaseCommand = new RelayCommand<string>(CreateDatabase, CanCreateDatabase);
+			CreateDatabaseCommand = new AsyncRelayCommand<string>(CreateDatabase, CanCreateDatabase);
         }
 
 		private void InitializeConnections()
@@ -126,7 +126,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		public RelayCommand<Database> UpdateCommand { get; private set; }
 
-		public RelayCommand<string> CreateDatabaseCommand { get; private set; }
+		public AsyncRelayCommand<string> CreateDatabaseCommand { get; private set; }
 
 		/// <summary>
 		/// Indicates that satate is being analyzed for <see cref="SelectedDatabase"/>
@@ -219,7 +219,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private bool CanCreateDatabase(string dbName)
 		{
-			return SelectedConnection != null && !SelectedConnection.Databases.Any(d => d.Name == dbName);
+			return SelectedConnection != null && !SelectedConnection.Databases.Any(d => d.Name == dbName) && !CreateDatabaseCommand.InProgress;
         }
 	}
 }

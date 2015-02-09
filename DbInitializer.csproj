@@ -89,6 +89,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AsyncRelayCommand.cs" />
+    <Compile Include="AsyncRelayCommand`.cs" />
     <Compile Include="Messages\DialogClosedMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Models\AuthenticationMode.cs" />
