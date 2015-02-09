@@ -24,10 +24,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 
 		public override string ToString()
 		{
-			return string.Format("{0}{1} {2}", 
-				Type, 
+			return string.Format("{0}{1}, {2}", 
+				Type.ToString().ToLower(), 
 				CharacterLength.HasValue ? "(" + CharacterLength + ")" : "", 
-				Nullable ? "NULL" : "NOT NULL");
+				Nullable ? "null" : "not null");
 		}
 
 		private SqlDbType ParseType(string name)
