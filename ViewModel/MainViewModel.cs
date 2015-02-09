@@ -18,6 +18,7 @@ using GalaSoft.MvvmLight.Ioc;
 using PoliceSoft.Aquas.Model.Initializer.Messages;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -90,7 +91,15 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void OnNewConnection(Connection connection)
 		{
-			connection.Databases = dbAnalyzer.GetDatabases(connection);
+            Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
+				.ContinueWith(
+				t =>
+				{
+					foreach (var d in t.Result)
+					{
+						connection.Databases.Add(d);
+					}
+				}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void OpenConnectDialog()

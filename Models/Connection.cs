@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -17,13 +18,13 @@ namespace PoliceSoft.Aquas.Model.Initializer.Models
 		{
 			DbConnection = dbConnection;
 			Priority = priority;
-			Databases = new List<Database>();
+			Databases = new ObservableCollection<Database>();
 		}
 
 		public DbConnection DbConnection { get; private set; }
 
 		public DataSourcePriority Priority { get; private set; }
 
-		public ICollection<Database> Databases { get; set; }
+		public ObservableCollection<Database> Databases { get; set; }
 	}
 }
