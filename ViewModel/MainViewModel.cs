@@ -16,6 +16,8 @@ using PoliceSoft.Aquas.Model.Initializer.Services;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Ioc;
 using PoliceSoft.Aquas.Model.Initializer.Messages;
+using System.Windows.Data;
+using System.ComponentModel;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
@@ -55,24 +57,34 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			this.connectionService = connectionService;
 			this.dbAnalyzer = dbAnalyzer;
 
+			InitializeConnections();
+
+			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
+        }
+
+		private void InitializeConnections()
+		{
 			Connections = new ObservableCollection<Connection>(connectionService.ActiveConnections);
 			foreach (var c in Connections)
 			{
 				OnNewConnection(c);
 			}
-			this.connectionService.NewConnection +=
+			connectionService.NewConnection +=
 				c =>
 				{
 					OnNewConnection(c);
 					Connections.Add(c);
 				};
 
-			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
+			ConnectionsView = CollectionViewSource.GetDefaultView(Connections);
+			ConnectionsView.SortDescriptions.Add(new SortDescription("Priority", ListSortDirection.Descending));
         }
 
 		public Database Database { get; private set; }
 
 		public ObservableCollection<Connection> Connections { get; private set; }
+
+		public ICollectionView ConnectionsView { get; private set; }
 
 		public RelayCommand OpenConnectDialogCommand { get; private set; }
 

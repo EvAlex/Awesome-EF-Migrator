@@ -4,11 +4,90 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Model.Initializer"
+        xmlns:models="clr-namespace:PoliceSoft.Aquas.Model.Initializer.Models"
         mc:Ignorable="d"
-        Title="Database Initializer" Height="350" Width="525"
+        Title="Database Initializer" Height="450" Width="800" WindowStartupLocation="CenterScreen"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
+
+    <Window.Resources>
+        <Style TargetType="HeaderedContentControl">
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="HeaderedContentControl">
+                        <DockPanel>
+                            <ContentPresenter DockPanel.Dock="Top" ContentSource="Header" />
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Button Command="{Binding OpenConnectDialogCommand}" 
-                HorizontalAlignment="Left" VerticalAlignment="Top">Connect</Button>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+
+        <HeaderedContentControl>
+            <HeaderedContentControl.Header>
+                <Border BorderThickness="0,0,0,1" BorderBrush="LightGray">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border Background="#FFECECEC">
+                            <TextBlock FontSize="14" Margin="3">Available Connections</TextBlock>
+                        </Border>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1">
+                            <Button Command="{Binding OpenConnectDialogCommand}">
+                                <Button.ToolTip>Add New Connection</Button.ToolTip>
+                                <Image Source="add-data-source.png" Stretch="None"></Image>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </HeaderedContentControl.Header>
+            <HeaderedContentControl.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type models:Connection}" 
+                                          ItemsSource="{Binding Databases}">
+                    <TextBlock Text="{Binding DbConnection.DataSource}"/>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type models:Database}"
+                                          ItemsSource="{Binding Tables}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="db.png" Stretch="None"></Image>
+                        <TextBlock Text="{Binding Name}"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <HierarchicalDataTemplate DataType="{x:Type models:DatabaseTable}"
+                                          ItemsSource="{Binding Columns}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="table.png" Stretch="None"></Image>
+                        <TextBlock>
+							<Run>[</Run>
+							<Run Text="{Binding Schema, Mode=OneWay}"/>
+							<Run>].[</Run>
+							<Run Text="{Binding Name, Mode=OneWay}"/>
+							<Run>]</Run>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type models:TableColumn}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="column.png" Stretch="None"></Image>
+                        <TextBlock Text="{Binding}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </HeaderedContentControl.Resources>
+
+            <TreeView ItemsSource="{Binding Connections}" BorderThickness="0">
+            </TreeView>
+        </HeaderedContentControl>
+
+        <GridSplitter Grid.Column="1" Grid.RowSpan="100" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
     </Grid>
 </Window>
