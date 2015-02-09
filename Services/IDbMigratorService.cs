@@ -12,8 +12,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 	{
 		DbMigrationsConfiguration GetMigrationsConfiguration(Type dbContextType);
 
-		ICollection<Migration> GetMigrations(DbMigrationsConfiguration dbMigrationsConfig);
+		ICollection<Migration> GetMigrations(DbMigrationsConfiguration dbMigrationsConfig, Database database);
 
 		bool DatabaseHasMigrationsFor(Database database, DbMigrationsConfiguration dbMigrationsConfig);
-    }
+
+		void UpdateDatabase(Database database);
+	}
 }

@@ -23,20 +23,20 @@ using System.Windows;
 
 namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
-    public class MainViewModel : ViewModelBase
-    {
+	/// <summary>
+	/// This class contains properties that the main View can data bind to.
+	/// <para>
+	/// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
+	/// </para>
+	/// <para>
+	/// You can also use Blend to data bind with the tool's support.
+	/// </para>
+	/// <para>
+	/// See http://www.galasoft.ch/mvvm
+	/// </para>
+	/// </summary>
+	public class MainViewModel : ViewModelBase
+	{
 		private readonly IConnectionService connectionService;
 		private readonly IDbAnalyzerService dbAnalyzer;
 		private readonly IDbMigratorService dbMigrator;
@@ -48,7 +48,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
 		public MainViewModel(IConnectionService connectionService, IDbAnalyzerService dbAnalyzer, IDbMigratorService dbMigrator)
-        {
+		{
 			if (IsInDesignMode)
 			{
 				// Code runs in Blend --> create design time data.
@@ -66,7 +66,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
 			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
-        }
+			UpdateCommand = new RelayCommand<Database>(UpdateDatabase, CanUpdateDatabase);
+		}
 
 		private void InitializeConnections()
 		{
@@ -84,7 +85,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			ConnectionsView = CollectionViewSource.GetDefaultView(Connections);
 			ConnectionsView.SortDescriptions.Add(new SortDescription("Priority", ListSortDirection.Descending));
-        }
+		}
 
 		public Database Database { get; private set; }
 
@@ -105,11 +106,24 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		public RelayCommand<string> CopyCommand { get; private set; }
 
+		public RelayCommand<Database> UpdateCommand { get; private set; }
+
+		/// <summary>
+		/// Indicates that satate is being analyzed for <see cref="SelectedDatabase"/>
+		/// </summary>
+		public bool AnalyzingDbState
+		{
+			get { return analyzingState; }
+			set { Set(ref analyzingState, value); }
+		}
+		private bool analyzingState;
+
+
 		private void OnNewConnection(Connection connection)
 		{
 			connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
 
-            Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
+			Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
 				.ContinueWith(
 				t =>
 				{
@@ -117,10 +131,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					{
 						connection.Databases.Add(d);
 						d.Selected += OnDatabaseSelected;
-                    }
+					}
 
 					connection.IsExpanded = true;
-                    foreach (var d in connection.DatabasesView)
+					foreach (var d in connection.DatabasesView)
 					{
 						(d as Database).IsSelected = true;
 						break;
@@ -131,6 +145,19 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		private void OnDatabaseSelected(TreeViewItemModel db)
 		{
 			SelectedDatabase = db as Database;
+			AnalyzingDbState = true;
+
+			Task.Factory.StartNew(() => dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), SelectedDatabase))
+				.ContinueWith(
+					t =>
+					{
+						foreach (var m in t.Result)
+						{
+							SelectedDatabase.Migrations.Add(m);
+						}
+						UpdateCommand.RaiseCanExecuteChanged();
+						AnalyzingDbState = false;
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
 		private bool ShouldShowDatabase(Database database)
@@ -145,6 +172,16 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			var connectionDialog = SimpleIoc.Default.GetInstance<IConnectionDialog>(Guid.NewGuid().ToString());
 			MessengerInstance.Register<DialogClosedMessage<IConnectionDialog>>(this, msg => connectionDialog.Close());
 			connectionDialog.ShowDialog();
-        }
+		}
+
+		private void UpdateDatabase(Database database)
+		{
+			dbMigrator.UpdateDatabase(database);
+		}
+
+		private bool CanUpdateDatabase(Database database)
+		{
+			return database.HasPendingMigrations;
+		}
 	}
 }

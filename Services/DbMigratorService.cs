@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
@@ -27,14 +29,15 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 			return dbMigrationsConfig;
 		}
 
-		public ICollection<Migration> GetMigrations(DbMigrationsConfiguration dbMigrationsConfig)
+		public ICollection<Migration> GetMigrations(DbMigrationsConfiguration dbMigrationsConfig, Database database)
 		{
+			dbMigrationsConfig.TargetDatabase = new DbConnectionInfo(database.DbConnection.ConnectionString, "System.Data.SqlClient");	//	TODO providername
 			var dbMigrator = new DbMigrator(dbMigrationsConfig);
 			var dbMigrations = dbMigrator.GetDatabaseMigrations();
 			var localMigrations = dbMigrator.GetLocalMigrations();
 			var pendingMigrations = dbMigrator.GetPendingMigrations();
 
-			return 
+			return
 				localMigrations.Except(pendingMigrations)
 					.Select(m => new Migration(m, MigrationState.Applied))
 				.Union(pendingMigrations
@@ -46,6 +49,11 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 		{
 			return database.HasMigrationHistory &&
 				   database.MigrationHistoryRows.Any(r => r.ContextKey == dbMigrationsConfig.GetType().FullName);
+		}
+
+		public void UpdateDatabase(Database database)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
