@@ -256,7 +256,7 @@
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1">
                         <Button Command="{Binding UpdateToMigrationCommand}" CommandParameter="{Binding SelectedMigration}">Update To Selected</Button>
-                        <Button Command="{Binding RollbackAllMigrationsCommand}" CommandParameter="{Binding SelectedDatabase}">Rollback All</Button>
+                        <Button Command="{Binding RollbackAllMigrationsCommand}" CommandParameter="{Binding SelectedDatabase}" Margin="5,0,0,0">Rollback All</Button>
                     </StackPanel>
 
                     <ProgressBar Visibility="{c:Binding UpdateToMigrationCommand.InProgress or RollbackAllMigrationsCommand.InProgress, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="2" Height="3"/>
@@ -272,7 +272,7 @@
                             <DataGridTemplateColumn Header="State" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Grid>
+                                        <Grid Margin="3,1.5">
                                             <TextBlock Text="{Binding State}">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
