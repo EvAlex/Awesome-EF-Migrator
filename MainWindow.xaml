@@ -187,6 +187,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
@@ -227,8 +228,9 @@
                     </Button>
                 </Grid>
 
-                <ProgressBar Visibility="{c:Binding AnalyzingDbState}" IsIndeterminate="True" Grid.Row="1" Height="3"/>
-                <Grid Grid.Row="1" Margin="0,15,0,0" Visibility="{c:Binding !AnalyzingDbState, FalseToVisibility=Hidden}">
+                <ProgressBar Visibility="{c:Binding AnalyzingDbState, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="1" Height="3"/>
+                
+                <Grid Grid.Row="2" Margin="0,15,0,0" Visibility="{c:Binding !AnalyzingDbState and !UpdateCommand.InProgress, FalseToVisibility=Hidden}">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="TextBlock">
@@ -238,13 +240,16 @@
                         <TextBlock>State:</TextBlock>
                         <TextBlock Foreground="DarkRed" Visibility="{c:Binding SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Margin="5,0">Has pending migrations</TextBlock>
                         <TextBlock Foreground="DarkGreen" Visibility="{c:Binding !SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Margin="5,0">Up-to-date</TextBlock>
-                        <Button Command="{Binding UpdateCommand}" CommandParameter="{Binding SelectedDatabase}" Visibility="{c:Binding SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Margin="5,0">
+                        <Button Command="{Binding UpdateCommand}" CommandParameter="{Binding SelectedDatabase}" 
+                                
+                                Visibility="{c:Binding SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Padding="10,5" FontSize="18" Background="LightGreen" Margin="5,0">
                             Update to latest version
                         </Button>
                     </StackPanel>
                 </Grid>
+                <ProgressBar Visibility="{c:Binding UpdateCommand.InProgress, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="2" Height="3"/>
 
-                <Grid Grid.Row="2" Margin="0,20,0,0">
+                <Grid Grid.Row="3" Margin="0,20,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
