@@ -267,13 +267,13 @@
                               AutoGenerateColumns="False" RowHeaderWidth="0" SelectionMode="Single"
                               Grid.Row="3">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Created At" Binding="{Binding Timestamp}"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Created At" Binding="{Binding Timestamp, Mode=OneWay}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" Width="*"/>
                             <DataGridTemplateColumn Header="State" >
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid Margin="3,1.5">
-                                            <TextBlock Text="{Binding State}">
+                                            <TextBlock Text="{Binding State, Mode=OneWay}">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
                                                         <Style.Triggers>
