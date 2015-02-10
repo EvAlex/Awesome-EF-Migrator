@@ -66,7 +66,10 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
 			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
-			UpdateCommand = new RelayCommand<Database>(UpdateDatabase, CanUpdateDatabase);
+			UpdateCommand = new AsyncRelayCommand<Database, Database>(
+				UpdateDatabase, 
+				OnDatabaseUpdated,
+				CanUpdateDatabase);
 			CreateDatabaseCommand = new AsyncRelayCommand<string, Database>(
 				CreateDatabase,
 				OnDatabaseCreated,
@@ -234,16 +237,17 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		#region UpdateCommand
 
-		public RelayCommand<Database> UpdateCommand { get; private set; }
+		public AsyncRelayCommand<Database, Database> UpdateCommand { get; private set; }
 
-		private void UpdateDatabase(Database database)
+		private Database UpdateDatabase(Database database)
 		{
 			dbMigrator.UpdateDatabase(database, dbMigrator.GetMigrationsConfiguration(dbContextType));
-		}
+			return database;
+        }
 
 		private bool CanUpdateDatabase(Database database)
 		{
-			return database.HasPendingMigrations;
+			return database != null && database.HasPendingMigrations;
 		}
 
 		#endregion
@@ -304,7 +308,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 		private bool CanUpdateDatabase(Migration targetMigration)
 		{
 			return SelectedDatabase != null && 
-				targetMigration != null && targetMigration.State == MigrationState.Pending && 
+				targetMigration != null && 
 				!UpdateToMigrationCommand.InProgress && !RollbackAllMigrationsCommand.InProgress;
 		}
 
