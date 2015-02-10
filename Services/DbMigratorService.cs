@@ -53,9 +53,28 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 
 		public void UpdateDatabase(Database database, DbMigrationsConfiguration dbMigrationsConfig)
 		{
+			UpdateDatabase(database, dbMigrationsConfig, (string)null);
+		}
+
+		public void UpdateDatabase(Database database, DbMigrationsConfiguration dbMigrationsConfig, Migration targetMigration)
+		{
+			UpdateDatabase(database, dbMigrationsConfig, targetMigration.Name);
+		}
+
+		public void RollbackAllMigrations(Database database, DbMigrationsConfiguration dbMigrationsConfig)
+		{
+			UpdateDatabase(database, dbMigrationsConfig, "0");
+		}
+
+		private void UpdateDatabase(Database database, DbMigrationsConfiguration dbMigrationsConfig, string targetMigration)
+		{
 			dbMigrationsConfig.TargetDatabase = new DbConnectionInfo(database.ConnectionString, "System.Data.SqlClient");	//	TODO providername
 			var migrator = new DbMigrator(dbMigrationsConfig);
-			migrator.Update();
+			if (targetMigration == null)
+				migrator.Update();
+			else
+				migrator.Update(targetMigration);
+
 		}
-	}
+    }
 }
