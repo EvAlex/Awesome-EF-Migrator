@@ -70,8 +70,18 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			CreateDatabaseCommand = new AsyncRelayCommand<string, Database>(
 				CreateDatabase,
 				OnDatabaseCreated,
-                CanCreateDatabase);
-        }
+				CanCreateDatabase);
+
+			UpdateToMigrationCommand = new AsyncRelayCommand<Migration, Database>(
+				UpdateDatabase,
+				OnDatabaseUpdated,
+				CanUpdateDatabase);
+
+			RollbackAllMigrationsCommand = new AsyncRelayCommand<Database, Database>(
+				RollbackAllMigrations,
+				OnRolledBackAllMigrations,
+				CanRollbackAllMigrations);
+		}
 
 		private void InitializeConnections()
 		{
@@ -111,7 +121,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			set { Set(ref selectedDatabse, value); }
 		}
 		private Database selectedDatabse;
-		
+
 		public string NewDatabaseName
 		{
 			get { return newDatabaseName; }
@@ -122,14 +132,13 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			}
 		}
 		private string newDatabaseName;
-		
-		public RelayCommand OpenConnectDialogCommand { get; private set; }
+
 
 		public RelayCommand<string> CopyCommand { get; private set; }
 
-		public RelayCommand<Database> UpdateCommand { get; private set; }
 
-		public AsyncRelayCommand<string, Database> CreateDatabaseCommand { get; private set; }
+
+
 
 		/// <summary>
 		/// Connection that is currently used to create database
@@ -156,7 +165,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					SelectedDatabase = null;
 					NewDatabaseName = dbContextType.Name;
 				};
-            connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
+			connection.DatabasesView.Filter = obj => ShouldShowDatabase(obj as Database);
 
 			Task.Factory.StartNew(() => dbAnalyzer.GetDatabases(connection))
 				.ContinueWith(
@@ -182,19 +191,26 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			SelectedConnection = null;
 			SelectedDatabase = db as Database;
 			AnalyzingDbState = true;
+			RefreshDatabaseDetails(SelectedDatabase);
+		}
 
-			Task.Factory.StartNew(() => dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), SelectedDatabase))
+		private void RefreshDatabaseDetails(Database database)
+		{
+			Task.Factory.StartNew(() => dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), database))
 				.ContinueWith(
 					t =>
 					{
+						database.Migrations.Clear();
 						foreach (var m in t.Result)
 						{
-							SelectedDatabase.Migrations.Add(m);
+							database.Migrations.Add(m);
 						}
 						UpdateCommand.RaiseCanExecuteChanged();
+						UpdateToMigrationCommand.RaiseCanExecuteChanged();
+						RollbackAllMigrationsCommand.RaiseCanExecuteChanged();
 						AnalyzingDbState = false;
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
+					}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
 
 		private bool ShouldShowDatabase(Database database)
 		{
@@ -203,12 +219,22 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 				 dbMigrator.DatabaseHasMigrationsFor(database, dbMigrator.GetMigrationsConfiguration(dbContextType)));
 		}
 
+		#region OpenConnectDialogCommand
+
+		public RelayCommand OpenConnectDialogCommand { get; private set; }
+
 		private void OpenConnectDialog()
 		{
 			var connectionDialog = SimpleIoc.Default.GetInstance<IConnectionDialog>(Guid.NewGuid().ToString());
 			MessengerInstance.Register<DialogClosedMessage<IConnectionDialog>>(this, msg => connectionDialog.Close());
 			connectionDialog.ShowDialog();
 		}
+
+		#endregion
+
+		#region UpdateCommand
+
+		public RelayCommand<Database> UpdateCommand { get; private set; }
 
 		private void UpdateDatabase(Database database)
 		{
@@ -220,10 +246,16 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			return database.HasPendingMigrations;
 		}
 
+		#endregion
+
+		#region CreateDatabaseCommand
+
+		public AsyncRelayCommand<string, Database> CreateDatabaseCommand { get; private set; }
+
 		private Database CreateDatabase(string dbName)
 		{
 			createDbConnection = SelectedConnection;
-            UpdateDatabase(new Database(dbName, createDbConnection.DbConnection, null));
+			UpdateDatabase(new Database(dbName, createDbConnection.DbConnection, null));
 			return dbAnalyzer.GetDatabase(createDbConnection, dbName);
 		}
 
@@ -233,11 +265,72 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			database.Selected += OnDatabaseSelected;
 			database.IsSelected = true;
 			createDbConnection = null;
-        }
+		}
 
 		private bool CanCreateDatabase(string dbName)
 		{
 			return SelectedConnection != null && !SelectedConnection.Databases.Any(d => d.Name == dbName) && !CreateDatabaseCommand.InProgress;
-        }
+		}
+
+		#endregion
+
+		#region UpdateToMigrationCommand
+
+		public Migration SelectedMigration
+		{
+			get { return selectedMigration; }
+			set
+			{
+				Set(ref selectedMigration, value);
+				UpdateToMigrationCommand.RaiseCanExecuteChanged();
+            }
+		}
+		private Migration selectedMigration;
+
+		public AsyncRelayCommand<Migration, Database> UpdateToMigrationCommand { get; private set; }
+
+		private Database UpdateDatabase(Migration targetMigration)
+		{
+			var database = SelectedDatabase;
+			dbMigrator.UpdateDatabase(database, dbMigrator.GetMigrationsConfiguration(dbContextType), targetMigration);
+			return database;
+		}
+
+		private void OnDatabaseUpdated(Database database)
+		{
+			RefreshDatabaseDetails(database);
+		}
+
+		private bool CanUpdateDatabase(Migration targetMigration)
+		{
+			return SelectedDatabase != null && 
+				targetMigration != null && targetMigration.State == MigrationState.Pending && 
+				!UpdateToMigrationCommand.InProgress && !RollbackAllMigrationsCommand.InProgress;
+		}
+
+		#endregion
+
+		#region RollbackAllMigrationsCommand
+
+		public AsyncRelayCommand<Database, Database> RollbackAllMigrationsCommand { get; private set; }
+
+		private Database RollbackAllMigrations(Database database)
+		{
+			dbMigrator.RollbackAllMigrations(database, dbMigrator.GetMigrationsConfiguration(dbContextType));
+			return database;
+		}
+
+		private void OnRolledBackAllMigrations(Database database)
+		{
+			RefreshDatabaseDetails(database);
+		}
+
+		private bool CanRollbackAllMigrations(Database database)
+		{
+			return database != null && database.Migrations.Any(m => m.State == MigrationState.Applied) &&
+				!UpdateToMigrationCommand.InProgress && !RollbackAllMigrationsCommand.InProgress;
+		}
+
+		#endregion
 	}
 }

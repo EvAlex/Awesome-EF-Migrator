@@ -24,8 +24,30 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style BasedOn="{StaticResource HeaderedContentControlStyle}" TargetType="HeaderedContentControl"/>
+
+        <Style TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+        </Style>
+
+        <Style x:Key="h1" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="h2" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="h3" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -112,7 +134,7 @@
                     </Style.Triggers>
                 </Style>
             </HeaderedContentControl.Style>
-            
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -124,17 +146,17 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                
+
                 <TextBlock Grid.ColumnSpan="100" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold">Create New Database</TextBlock>
-                
+
                 <TextBlock Grid.Row="1" VerticalAlignment="Center" Margin="0,0,5,0">Database name</TextBlock>
                 <TextBox Text="{Binding NewDatabaseName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1"/>
-                
+
                 <Button Command="{Binding CreateDatabaseCommand}" CommandParameter="{Binding NewDatabaseName}"
                         Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0">
                     Create
                 </Button>
-                
+
                 <ProgressBar Visibility="{c:Binding CreateDatabaseCommand.InProgress}" IsIndeterminate="True" Height="3" Grid.Row="3" Grid.Column="1"/>
             </Grid>
         </HeaderedContentControl>
@@ -156,6 +178,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <Grid>
@@ -180,7 +203,7 @@
                             <Setter Property="Margin" Value="0,0,0,3"/>
                         </Style>
                         <Style TargetType="Button">
-                            <Setter Property="Margin" Value="0,0,0,3"/>                            
+                            <Setter Property="Margin" Value="0,0,0,3"/>
                         </Style>
                     </Grid.Resources>
 
@@ -194,9 +217,9 @@
                         <Image Source="copy.png" Stretch="None"/>
                     </Button>
                 </Grid>
-                
+
                 <ProgressBar Visibility="{c:Binding AnalyzingDbState}" IsIndeterminate="True" Grid.Row="1" Height="3"/>
-                <Grid Grid.Row="1" Margin="0,15,0,0" Visibility="{c:Binding !AnalyzingDbState}">
+                <Grid Grid.Row="1" Margin="0,15,0,0" Visibility="{c:Binding !AnalyzingDbState, FalseToVisibility=Hidden}">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="TextBlock">
@@ -211,7 +234,57 @@
                         </Button>
                     </StackPanel>
                 </Grid>
-                
+
+                <Grid Grid.Row="2" Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Style="{StaticResource h3}">Database Migrations</TextBlock>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1">
+                        <Button Command="{Binding UpdateToMigrationCommand}" CommandParameter="{Binding SelectedMigration}">Update To Selected</Button>
+                        <Button Command="{Binding RollbackAllMigrationsCommand}" CommandParameter="{Binding SelectedDatabase}">Rollback All</Button>
+                    </StackPanel>
+
+                    <ProgressBar Visibility="{c:Binding UpdateToMigrationCommand.InProgress or RollbackAllMigrationsCommand.InProgress, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="2" Height="3"/>
+
+                    <DataGrid ItemsSource="{Binding SelectedDatabase.Migrations}"
+                              SelectedItem="{Binding SelectedMigration, Mode=TwoWay}"
+                              Name="MigrationsTable"
+                              AutoGenerateColumns="False" RowHeaderWidth="0" SelectionMode="Single"
+                              Grid.Row="3">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Created At" Binding="{Binding Timestamp}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTemplateColumn Header="State" >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock Text="{Binding State}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static models:MigrationState.Applied}">
+                                                                <Setter Property="Foreground" Value="DarkGreen"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding State}" Value="{x:Static models:MigrationState.Pending}">
+                                                                <Setter Property="Foreground" Value="DarkRed"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
         </HeaderedContentControl>
     </Grid>
