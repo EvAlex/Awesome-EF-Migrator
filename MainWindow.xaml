@@ -48,6 +48,10 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
         </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="8,3"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -126,8 +130,8 @@
 
         <HeaderedContentControl Grid.Column="2">
             <HeaderedContentControl.Header>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Image Source="connection.png" Stretch="None" Margin="0,0,10,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Data Source Connection">
+                    <Image Source="connection.png" Stretch="None" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding SelectedConnection.DbConnection.DataSource}" Style="{StaticResource h2}"/>
                 </StackPanel>
             </HeaderedContentControl.Header>
@@ -141,7 +145,7 @@
                 </Style>
             </HeaderedContentControl.Style>
 
-            <Grid>
+            <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -153,15 +157,22 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.ColumnSpan="100" HorizontalAlignment="Center" FontSize="16" FontWeight="SemiBold">Create New Database</TextBlock>
+                <TextBlock Grid.ColumnSpan="100" HorizontalAlignment="Center" Margin="20,8"
+                           FontSize="16" FontWeight="SemiBold">Create New Database</TextBlock>
 
                 <TextBlock Grid.Row="1" VerticalAlignment="Center" Margin="0,0,5,0">Database name</TextBlock>
                 <TextBox Text="{Binding NewDatabaseName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1"/>
 
-                <Button Command="{Binding CreateDatabaseCommand}" CommandParameter="{Binding NewDatabaseName}"
-                        Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0">
-                    Create
-                </Button>
+                <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0">
+                    <Button Command="{Binding CreateDatabaseCommand}" CommandParameter="{Binding NewDatabaseName}">
+                        Create
+                    </Button>
+                    <TextBlock Foreground="DarkOrange" 
+                               Visibility="{c:Binding NewDbNameInUse, Mode=OneWay}"
+                               VerticalAlignment="Center" Margin="5,0,0,0">
+                        Database <Run Text="{Binding NewDatabaseName}" FontWeight="SemiBold"/> already exists.
+                    </TextBlock>
+                </StackPanel>
 
                 <ProgressBar Visibility="{c:Binding CreateDatabaseCommand.InProgress}" IsIndeterminate="True" Height="3" Grid.Row="3" Grid.Column="1"/>
             </Grid>
@@ -169,8 +180,8 @@
 
         <HeaderedContentControl Grid.Column="2">
             <HeaderedContentControl.Header>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Image Source="db.png" Stretch="None" Margin="0,0,10,0"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Database">
+                    <Image Source="db.png" Stretch="None" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding SelectedDatabase.Name}" Style="{StaticResource h2}"/>
                 </StackPanel>
             </HeaderedContentControl.Header>
@@ -222,14 +233,15 @@
 
                     <TextBlock Grid.Row="1">Connection String</TextBlock>
                     <TextBox Text="{Binding SelectedDatabase.ConnectionString, Mode=OneWay}"  Grid.Row="1"/>
-                    <Button Command="{Binding CopyCommand}" CommandParameter="{Binding SelectedDatabase.ConnectionString}" Grid.Column="2" Grid.Row="1">
+                    <Button Command="{Binding CopyCommand}" CommandParameter="{Binding SelectedDatabase.ConnectionString}" 
+                            Grid.Column="2" Grid.Row="1">
                         <Button.ToolTip>Copy</Button.ToolTip>
                         <Image Source="copy.png" Stretch="None"/>
                     </Button>
                 </Grid>
 
                 <ProgressBar Visibility="{c:Binding AnalyzingDbState, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="1" Height="3"/>
-                
+
                 <Grid Grid.Row="2" Margin="0,15,0,0" Visibility="{c:Binding !AnalyzingDbState and !UpdateCommand.InProgress, FalseToVisibility=Hidden}">
                     <StackPanel Orientation="Horizontal">
                         <StackPanel.Resources>
@@ -240,8 +252,7 @@
                         <TextBlock>State:</TextBlock>
                         <TextBlock Foreground="DarkRed" Visibility="{c:Binding SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Margin="5,0">Has pending migrations</TextBlock>
                         <TextBlock Foreground="DarkGreen" Visibility="{c:Binding !SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Margin="5,0">Up-to-date</TextBlock>
-                        <Button Command="{Binding UpdateCommand}" CommandParameter="{Binding SelectedDatabase}" 
-                                
+                        <Button Command="{Binding UpdateCommand}" CommandParameter="{Binding SelectedDatabase}"                                 
                                 Visibility="{c:Binding SelectedDatabase.HasPendingMigrations, Mode=OneWay}" Padding="10,5" FontSize="18" Background="LightGreen" Margin="5,0">
                             Update to latest version
                         </Button>
@@ -259,9 +270,15 @@
 
                     <TextBlock Style="{StaticResource h3}">Database Migrations</TextBlock>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="1">
-                        <Button Command="{Binding UpdateToMigrationCommand}" CommandParameter="{Binding SelectedMigration}">Update To Selected</Button>
-                        <Button Command="{Binding RollbackAllMigrationsCommand}" CommandParameter="{Binding SelectedDatabase}" Margin="5,0,0,0">Rollback All</Button>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" 
+                                Margin="0,5,0,0" Grid.Row="1">
+                        <Button Command="{Binding UpdateToMigrationCommand}" 
+                                CommandParameter="{Binding SelectedMigration}"
+                                Style="{StaticResource ButtonStyle}">Update To Selected</Button>
+                        <Button Command="{Binding RollbackAllMigrationsCommand}" 
+                                CommandParameter="{Binding SelectedDatabase}" 
+                                Style="{StaticResource ButtonStyle}"
+                                Margin="5,0,0,0">Rollback All</Button>
                     </StackPanel>
 
                     <ProgressBar Visibility="{c:Binding UpdateToMigrationCommand.InProgress or RollbackAllMigrationsCommand.InProgress, FalseToVisibility=Hidden}" IsIndeterminate="True" Grid.Row="2" Height="3"/>
@@ -272,9 +289,14 @@
                               AutoGenerateColumns="False" RowHeaderWidth="0" SelectionMode="Single"
                               Grid.Row="3">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Created At" Binding="{Binding Timestamp, Mode=OneWay}"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" Width="*"/>
-                            <DataGridTemplateColumn Header="State" >
+                            <DataGridTextColumn Header="Created At" 
+                                                Binding="{Binding Timestamp, Mode=OneWay}"
+                                                CanUserSort="False"/>
+                            <DataGridTextColumn Header="Name" 
+                                                Binding="{Binding Name, Mode=OneWay}" 
+                                                Width="*" FontFamily="Segoe UI"
+                                                CanUserSort="False"/>
+                            <DataGridTemplateColumn Header="State" Width="70">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Grid Margin="3,1.5">

@@ -132,7 +132,8 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			{
 				Set(ref newDatabaseName, value);
 				CreateDatabaseCommand.RaiseCanExecuteChanged();
-			}
+				RaisePropertyChanged(() => NewDbNameInUse);
+            }
 		}
 		private string newDatabaseName;
 
@@ -181,39 +182,73 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 					}
 
 					connection.IsExpanded = true;
-					foreach (var d in connection.DatabasesView)
+
+					if (connection.Priority == DataSourcePriority.UserAdded || 
+					    SelectedDatabase == null ||
+						GetParentConnection(SelectedDatabase).Priority < connection.Priority)
 					{
-						(d as Database).IsSelected = true;
-						break;
+						foreach (var d in connection.DatabasesView)
+						{
+							(d as Database).IsSelected = true;
+							break;
+						}
 					}
 				}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private Connection GetParentConnection(Database database)
+		{
+			return Connections.Single(c => c.Databases.Any(d => d == database));
 		}
 
 		private void OnDatabaseSelected(TreeViewItemModel db)
 		{
 			SelectedConnection = null;
 			SelectedDatabase = db as Database;
-			AnalyzingDbState = true;
 			RefreshDatabaseDetails(SelectedDatabase);
 		}
 
-		private void RefreshDatabaseDetails(Database database)
+		//private void RefreshDatabaseDetails(Database database)
+		//{
+		//	AnalyzingDbState = true;
+		//	Task.Factory.StartNew(
+		//			() => 
+		//				dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), database))
+		//		.ContinueWith(
+		//			t =>
+		//			{
+		//				database.Migrations.Clear();
+		//				foreach (var m in t.Result)
+		//				{
+		//					database.Migrations.Add(m);
+		//				}
+		//				UpdateCommand.RaiseCanExecuteChanged();
+		//				UpdateToMigrationCommand.RaiseCanExecuteChanged();
+		//				RollbackAllMigrationsCommand.RaiseCanExecuteChanged();
+		//				AnalyzingDbState = false;
+		//			}, TaskScheduler.FromCurrentSynchronizationContext());
+		//}
+
+		private async Task RefreshDatabaseDetails(Database database)
 		{
-			Task.Factory.StartNew(() => dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), database))
-				.ContinueWith(
-					t =>
-					{
-						database.Migrations.Clear();
-						foreach (var m in t.Result)
-						{
-							database.Migrations.Add(m);
-						}
-						UpdateCommand.RaiseCanExecuteChanged();
-						UpdateToMigrationCommand.RaiseCanExecuteChanged();
-						RollbackAllMigrationsCommand.RaiseCanExecuteChanged();
-						AnalyzingDbState = false;
-					}, TaskScheduler.FromCurrentSynchronizationContext());
+			AnalyzingDbState = true;
+			var migrations = await GetDbMigrations(database);
+
+			database.Migrations.Clear();
+			foreach (var m in migrations)
+			{
+				database.Migrations.Add(m);
+			}
+			UpdateCommand.RaiseCanExecuteChanged();
+			UpdateToMigrationCommand.RaiseCanExecuteChanged();
+			RollbackAllMigrationsCommand.RaiseCanExecuteChanged();
+			AnalyzingDbState = false;
 		}
+
+		private async Task<ICollection<Migration>> GetDbMigrations(Database database)
+		{
+			return await Task.Run(() => dbMigrator.GetMigrations(dbMigrator.GetMigrationsConfiguration(dbContextType), database));
+        }
 
 		private bool ShouldShowDatabase(Database database)
 		{
@@ -273,8 +308,19 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private bool CanCreateDatabase(string dbName)
 		{
-			return SelectedConnection != null && !SelectedConnection.Databases.Any(d => d.Name == dbName) && !CreateDatabaseCommand.InProgress;
+			return !DbNameInUse(selectedConnection, dbName) && !CreateDatabaseCommand.InProgress;
 		}
+
+		public bool NewDbNameInUse
+		{
+			get { return DbNameInUse(selectedConnection, newDatabaseName); }
+		}
+
+		private bool DbNameInUse(Connection connection, string dbName)
+		{
+			return connection != null && connection.Databases.Any(d => d.Name == dbName);
+        }
+
 
 		#endregion
 
