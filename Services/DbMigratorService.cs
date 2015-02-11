@@ -31,7 +31,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 
 		public ICollection<Migration> GetMigrations(DbMigrationsConfiguration dbMigrationsConfig, Database database)
 		{
-			dbMigrationsConfig.TargetDatabase = new DbConnectionInfo(database.ConnectionString, "System.Data.SqlClient");	//	TODO providername
+            dbMigrationsConfig.TargetDatabase = new DbConnectionInfo(database.ConnectionString, "System.Data.SqlClient");	//	TODO providername
 			var dbMigrator = new DbMigrator(dbMigrationsConfig);
 			var dbMigrations = dbMigrator.GetDatabaseMigrations();
 			var localMigrations = dbMigrator.GetLocalMigrations();
