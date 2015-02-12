@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PoliceSoft.Aquas.Model.Initializer.Properties {
+namespace EvAlex.AwesomeEfMigrator.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
