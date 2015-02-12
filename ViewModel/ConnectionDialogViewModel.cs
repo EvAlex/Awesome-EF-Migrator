@@ -62,9 +62,12 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 		private void SelectConnectionWithHighestPriority()
 		{
-			selectedConnection = availableConnections.OrderByDescending(i => i.Priority).First();
-			RaisePropertyChanged(() => SelectedConnection);
-			NewDataSource = selectedConnection.DbConnection.DataSource;
+			if (availableConnections.Any())
+			{
+				selectedConnection = availableConnections.OrderByDescending(i => i.Priority).First();
+				RaisePropertyChanged(() => SelectedConnection);
+				NewDataSource = selectedConnection.DbConnection.DataSource;
+			}
 		}
 
 		public ICollectionView AvailableConnections { get; private set; }
