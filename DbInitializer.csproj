@@ -92,6 +92,8 @@
     <Compile Include="AsyncRelayCommand.cs" />
     <Compile Include="AsyncRelayCommand`2.cs" />
     <Compile Include="AsyncRelayCommand`.cs" />
+    <Compile Include="AwesomeEfMigratorConfig.cs" />
+    <Compile Include="AwesomeEfMigratorConfigBuilder.cs" />
     <Compile Include="Messages\DialogClosedMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="Models\AuthenticationMode.cs" />
@@ -107,9 +109,11 @@
     <Compile Include="Models\TableColumn.cs" />
     <Compile Include="Models\TreeViewItemModel.cs" />
     <Compile Include="Services\DbMigratorService.cs" />
+    <Compile Include="Services\EfConfigLoader.cs" />
     <Compile Include="Services\IConnectionService.cs" />
     <Compile Include="Services\IDbAnalyzerService.cs" />
     <Compile Include="Services\IDbMigratorService.cs" />
+    <Compile Include="Services\IEfConfigLoader.cs" />
     <Compile Include="Services\SqlServerConnectionService.cs" />
     <Compile Include="Services\SqlServerDbAnalyzerService.cs" />
     <Compile Include="ViewModel\ConnectionDialogViewModel.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="Views\IDialog.cs" />
     <Compile Include="Views\IErrorDialog.cs" />
     <Compile Include="Views\IWindow.cs" />
+    <Compile Include="ZeroConfig.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -180,16 +185,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{669e00e6-4ab8-420e-bbe7-cc309232e971}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Data.Storage\Data.Storage.csproj">
-      <Project>{a82ede02-590b-43b1-bf6e-e0645af8e975}</Project>
-      <Name>Data.Storage</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="add-data-source.png">
