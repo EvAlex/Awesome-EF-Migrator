@@ -14,7 +14,6 @@ using System.Windows.Data;
 using GalaSoft.MvvmLight;
 using PoliceSoft.Aquas.Model.Initializer.Models;
 using PoliceSoft.Aquas.Model.Initializer.Services;
-using PoliceSoft.Wpf;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
 using PoliceSoft.Aquas.Model.Initializer.Views;
