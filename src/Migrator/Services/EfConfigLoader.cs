@@ -13,11 +13,6 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 	{
 		private const string MigrationAssembliesDir = "MigrationAssemblies";
 
-		//private readonly string[] targetAssembliesPaths = new string[]
-		//	{
-		//		Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Data.Storage\bin\debug\PoliceSoft.Aquas.Data.Storage.dll"),
-		//	};
-
 		public IEnumerable<AwesomeEfMigratorConfig> LoadConfigs()
 		{
 			string dir = Path.Combine(Directory.GetCurrentDirectory(), MigrationAssembliesDir);
@@ -44,12 +39,6 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 					}
 				}
 			}
-			//return targetAssembliesPaths
-			//	.Select(path => Assembly.LoadFile(path))
-			//	.SelectMany(a => a.GetTypes())
-			//	.Where(t => t.BaseType == typeof(AwesomeEfMigratorConfig))
-			//	.Select(t => Activator.CreateInstance(t))
-			//	.OfType<AwesomeEfMigratorConfig>();
 		}
 	}
 }

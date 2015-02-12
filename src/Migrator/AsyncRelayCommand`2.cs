@@ -29,13 +29,6 @@ namespace PoliceSoft.Aquas.Model.Initializer
 			this.canExecute = canExecute;
 		}
 
-		public AsyncRelayCommand(Action<Database> updateDatabase, Action<Database> onDatabaseUpdated, Func<Database, bool> canUpdateDatabase)
-		{
-			this.updateDatabase = updateDatabase;
-			this.onDatabaseUpdated = onDatabaseUpdated;
-			this.canUpdateDatabase = canUpdateDatabase;
-		}
-
 		public bool InProgress
 		{
 			get { return inProgress; }
@@ -46,9 +39,6 @@ namespace PoliceSoft.Aquas.Model.Initializer
 			}
 		}
 		private bool inProgress;
-		private Action<Database> updateDatabase;
-		private Action<Database> onDatabaseUpdated;
-		private Func<Database, bool> canUpdateDatabase;
 
 		public void RaiseCanExecuteChanged()
 		{
