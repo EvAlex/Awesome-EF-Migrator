@@ -47,6 +47,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 			SimpleIoc.Default.Register<IConnectionService>(() => new SqlServerConnectionService());
 			SimpleIoc.Default.Register<IDbAnalyzerService>(() => new SqlServerDbAnalyzerService());
 			SimpleIoc.Default.Register<IDbMigratorService>(() => new DbMigratorService());
+			SimpleIoc.Default.Register<IEfConfigLoader>(() => new EfConfigLoader());
 
 			SimpleIoc.Default.Register<MainViewModel>();
 			SimpleIoc.Default.Register<ConnectionDialogViewModel>();

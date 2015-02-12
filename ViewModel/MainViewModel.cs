@@ -6,7 +6,6 @@ using System.Data.Common;
 using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using GalaSoft.MvvmLight;
-using PoliceSoft.Aquas.Data.Storage;
 using System.Globalization;
 using PoliceSoft.Aquas.Model.Initializer.Models;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -37,17 +36,18 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 	/// </summary>
 	public class MainViewModel : ViewModelBase
 	{
+		private readonly IEfConfigLoader efConfigLoader;
 		private readonly IConnectionService connectionService;
 		private readonly IDbAnalyzerService dbAnalyzer;
 		private readonly IDbMigratorService dbMigrator;
 
-		private readonly Type dbContextType = typeof(AquasDb);
+		private readonly Type dbContextType;
 		private readonly DbMigrationsConfiguration dbMigrationsConfiguration;
 
 		/// <summary>
 		/// Initializes a new instance of the MainViewModel class.
 		/// </summary>
-		public MainViewModel(IConnectionService connectionService, IDbAnalyzerService dbAnalyzer, IDbMigratorService dbMigrator)
+		public MainViewModel(IEfConfigLoader efConfigLoader, IConnectionService connectionService, IDbAnalyzerService dbAnalyzer, IDbMigratorService dbMigrator)
 		{
 			if (IsInDesignMode)
 			{
@@ -58,32 +58,41 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 				// Code runs "for real"
 			}
 
+
+			this.efConfigLoader = efConfigLoader;
 			this.connectionService = connectionService;
 			this.dbAnalyzer = dbAnalyzer;
 			this.dbMigrator = dbMigrator;
 
+			dbContextType = LoadDbContextType();
+
 			InitializeConnections();
 
-			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
-			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
-			UpdateCommand = new AsyncRelayCommand<Database, Database>(
-				UpdateDatabase, 
-				OnDatabaseUpdated,
-				CanUpdateDatabase);
-			CreateDatabaseCommand = new AsyncRelayCommand<string, Database>(
-				CreateDatabase,
-				OnDatabaseCreated,
-				CanCreateDatabase);
+			InitializeCommands();
+		}
 
-			UpdateToMigrationCommand = new AsyncRelayCommand<Migration, Database>(
-				UpdateDatabase,
-				OnDatabaseUpdated,
-				CanUpdateDatabase);
+		private Type LoadDbContextType()
+		{
+			Type res;
 
-			RollbackAllMigrationsCommand = new AsyncRelayCommand<Database, Database>(
-				RollbackAllMigrations,
-				OnRolledBackAllMigrations,
-				CanRollbackAllMigrations);
+			var configs = efConfigLoader.LoadConfigs();
+			var configBuilder = new AwesomeEfMigratorConfigBuilder();
+			foreach (var c in configs)
+			{
+				c.CallConfigure(configBuilder);
+			}
+
+			if (configBuilder.DbContextTypes.Count == 1)
+				res = configBuilder.DbContextTypes.First();
+			else
+				res = SelectDbContextType(configBuilder.DbContextTypes);
+
+			return res;
+		}
+
+		private Type SelectDbContextType(IReadOnlyCollection<Type> dbContextTypes)
+		{
+			throw new NotImplementedException();
 		}
 
 		private void InitializeConnections()
@@ -102,6 +111,30 @@ namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
 
 			ConnectionsView = CollectionViewSource.GetDefaultView(Connections);
 			ConnectionsView.SortDescriptions.Add(new SortDescription("Priority", ListSortDirection.Descending));
+		}
+
+		private void InitializeCommands()
+		{
+			OpenConnectDialogCommand = new RelayCommand(OpenConnectDialog);
+			CopyCommand = new RelayCommand<string>(str => Clipboard.SetText(str), str => !string.IsNullOrWhiteSpace(str));
+			UpdateCommand = new AsyncRelayCommand<Database, Database>(
+				UpdateDatabase,
+				OnDatabaseUpdated,
+				CanUpdateDatabase);
+			CreateDatabaseCommand = new AsyncRelayCommand<string, Database>(
+				CreateDatabase,
+				OnDatabaseCreated,
+				CanCreateDatabase);
+
+			UpdateToMigrationCommand = new AsyncRelayCommand<Migration, Database>(
+				UpdateDatabase,
+				OnDatabaseUpdated,
+				CanUpdateDatabase);
+
+			RollbackAllMigrationsCommand = new AsyncRelayCommand<Database, Database>(
+				RollbackAllMigrations,
+				OnRolledBackAllMigrations,
+				CanRollbackAllMigrations);
 		}
 
 		public Database Database { get; private set; }
