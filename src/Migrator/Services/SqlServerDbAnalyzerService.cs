@@ -49,7 +49,7 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 					   DATA_TYPE,
 					   IS_NULLABLE,
 					   CHARACTER_MAXIMUM_LENGTH 
-				FROM INFORMATION_SCHEMA.COLUMNS", dbName);
+				FROM INFORMATION_SCHEMA.COLUMNS ORDER BY TABLE_SCHEMA, TABLE_NAME", dbName);
 			using (var reader = Query(dbConnection, sql))
 			{
 				while (reader.Read())
