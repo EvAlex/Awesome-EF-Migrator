@@ -74,7 +74,7 @@
                         <StackPanel Orientation="Horizontal" Grid.Row="1">
                             <Button Command="{Binding OpenConnectDialogCommand}">
                                 <Button.ToolTip>Add New Connection</Button.ToolTip>
-                                <Image Source="add-data-source.png" Stretch="None"></Image>
+                                <Image Source="Icons/add-data-source.png" Stretch="None"></Image>
                             </Button>
                         </StackPanel>
                     </Grid>
@@ -84,21 +84,21 @@
                 <HierarchicalDataTemplate DataType="{x:Type models:Connection}" 
                                           ItemsSource="{Binding DatabasesView}">
                     <StackPanel Orientation="Horizontal" Margin="1.5">
-                        <Image Source="connection.png" Stretch="None"></Image>
+                        <Image Source="Icons/connection.png" Stretch="None"></Image>
                         <TextBlock Text="{Binding DbConnection.DataSource}"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:Database}"
                                           ItemsSource="{Binding Tables}">
                     <StackPanel Orientation="Horizontal" Margin="1.5">
-                        <Image Source="db.png" Stretch="None"></Image>
+                        <Image Source="Icons/db.png" Stretch="None"></Image>
                         <TextBlock Text="{Binding Name}" Margin="3,0,0,0"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate DataType="{x:Type models:DatabaseTable}"
                                           ItemsSource="{Binding Columns}">
                     <StackPanel Orientation="Horizontal" Margin="1.5">
-                        <Image Source="table.png" Stretch="None"></Image>
+                        <Image Source="Icons/table.png" Stretch="None"></Image>
                         <TextBlock Margin="3,0,0,0">
 							<Run>[</Run>
 							<Run Text="{Binding Schema, Mode=OneWay}"/>
@@ -110,7 +110,7 @@
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type models:TableColumn}">
                     <StackPanel Orientation="Horizontal" Margin="1.5">
-                        <Image Source="column.png" Stretch="None"></Image>
+                        <Image Source="Icons/column.png" Stretch="None"></Image>
                         <TextBlock Text="{Binding}" Margin="3,0,0,0"/>
                     </StackPanel>
                 </DataTemplate>
@@ -131,7 +131,7 @@
         <HeaderedContentControl Grid.Column="2">
             <HeaderedContentControl.Header>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Data Source Connection">
-                    <Image Source="connection.png" Stretch="None" Margin="0,0,5,0"/>
+                    <Image Source="Icons/connection.png" Stretch="None" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding SelectedConnection.DbConnection.DataSource}" Style="{StaticResource h2}"/>
                 </StackPanel>
             </HeaderedContentControl.Header>
@@ -181,7 +181,7 @@
         <HeaderedContentControl Grid.Column="2">
             <HeaderedContentControl.Header>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Database">
-                    <Image Source="db.png" Stretch="None" Margin="0,0,5,0"/>
+                    <Image Source="Icons/db.png" Stretch="None" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding SelectedDatabase.Name}" Style="{StaticResource h2}"/>
                 </StackPanel>
             </HeaderedContentControl.Header>
@@ -236,7 +236,7 @@
                     <Button Command="{Binding CopyCommand}" CommandParameter="{Binding SelectedDatabase.ConnectionString}" 
                             Grid.Column="2" Grid.Row="1">
                         <Button.ToolTip>Copy</Button.ToolTip>
-                        <Image Source="copy.png" Stretch="None"/>
+                        <Image Source="Icons/copy.png" Stretch="None"/>
                     </Button>
                 </Grid>
 

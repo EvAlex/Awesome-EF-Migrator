@@ -15,30 +15,40 @@ namespace PoliceSoft.Aquas.Model.Initializer.Services
 
 		public IEnumerable<AwesomeEfMigratorConfig> LoadConfigs()
 		{
-			string dir = Path.Combine(Directory.GetCurrentDirectory(), MigrationAssembliesDir);
-			var targetAssembliesPaths = Directory.GetFiles(dir, "*.dll").Union(Directory.GetFiles(dir, "*.exe"));
-            var assemblies = targetAssembliesPaths.Select(path => Assembly.LoadFile(path));
-			foreach (var a in assemblies)
-			{
-				var types = a.GetTypes();
-				var configTypes = types.Where(t => t.BaseType == typeof(AwesomeEfMigratorConfig));
-				if (configTypes.Any())
-				{
-					var configs = configTypes.Select(t => Activator.CreateInstance(t)).OfType<AwesomeEfMigratorConfig>();
-					foreach (var c in configs)
-					{
-						yield return c;
-					}
-				}
-				else
-				{
-					var dbContextTypes = types.Where(t => t.BaseType == typeof(DbContext));
-					foreach (var t in dbContextTypes)
-					{
-						yield return new ZeroConfig(t);
-					}
-				}
-			}
+		    string dir = Path.Combine(Directory.GetCurrentDirectory(), MigrationAssembliesDir);
+		    if (Directory.Exists(dir))
+		    {
+		        var targetAssembliesPaths = Directory.GetFiles(dir, "*.dll").Union(Directory.GetFiles(dir, "*.exe"));
+		        var assemblies = targetAssembliesPaths.Select(path => Assembly.LoadFile(path));
+		        foreach (var a in assemblies)
+		        {
+		            Type[] types = null;
+
+		            types = a.GetTypes();
+		            
+		            if (types != null)
+		            {
+		                var configTypes = types.Where(t => t.BaseType == typeof (AwesomeEfMigratorConfig));
+		                if (configTypes.Any())
+		                {
+		                    var configs =
+		                        configTypes.Select(t => Activator.CreateInstance(t)).OfType<AwesomeEfMigratorConfig>();
+		                    foreach (var c in configs)
+		                    {
+		                        yield return c;
+		                    }
+		                }
+		                else
+		                {
+		                    var dbContextTypes = types.Where(t => t.BaseType == typeof (DbContext));
+		                    foreach (var t in dbContextTypes)
+		                    {
+		                        yield return new ZeroConfig(t);
+		                    }
+		                }
+		            }
+		        }
+		    }
 		}
 	}
 }
