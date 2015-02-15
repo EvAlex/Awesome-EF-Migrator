@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using PoliceSoft.Aquas.Model.Initializer.Models;
+using EvAlex.AwesomeEfMigrator.Models;
 
-namespace PoliceSoft.Aquas.Model.Initializer
+namespace EvAlex.AwesomeEfMigrator
 {
 	public class AsyncRelayCommand<T, TResult> : ObservableObject, ICommand
 	{

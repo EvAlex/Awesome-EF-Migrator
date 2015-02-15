@@ -1,7 +1,7 @@
 /*
   In App.xaml:
   <Application.Resources>
-      <vm:ViewModelLocator xmlns:vm="clr-namespace:PoliceSoft.Aquas.Model.Initializer"
+      <vm:ViewModelLocator xmlns:vm="clr-namespace:EvAlex.AwesomeEfMigrator"
                            x:Key="Locator" />
   </Application.Resources>
   
@@ -15,10 +15,10 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
-using PoliceSoft.Aquas.Model.Initializer.Services;
-using PoliceSoft.Aquas.Model.Initializer.Views;
+using EvAlex.AwesomeEfMigrator.Services;
+using EvAlex.AwesomeEfMigrator.Views;
 
-namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
+namespace EvAlex.AwesomeEfMigrator.ViewModel
 {
     /// <summary>
     /// This class contains static references to all the view models in the

@@ -11,9 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using PoliceSoft.Aquas.Model.Initializer.ViewModel;
+using EvAlex.AwesomeEfMigrator.ViewModel;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Views
+namespace EvAlex.AwesomeEfMigrator.Views
 {
 	/// <summary>
 	/// Interaction logic for ConnectionDialog.xaml

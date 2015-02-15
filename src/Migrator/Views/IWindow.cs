@@ -1,4 +1,4 @@
-﻿namespace PoliceSoft.Aquas.Model.Initializer.Views
+﻿namespace EvAlex.AwesomeEfMigrator.Views
 {
 	public interface IWindow
 	{

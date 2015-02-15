@@ -4,9 +4,9 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PoliceSoft.Aquas.Model.Initializer.Models;
+using EvAlex.AwesomeEfMigrator.Models;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Services
+namespace EvAlex.AwesomeEfMigrator.Services
 {
 	public interface IDbMigratorService
 	{

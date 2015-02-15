@@ -7,20 +7,20 @@ using System.Data.Entity.Migrations;
 using System.Data.SqlClient;
 using GalaSoft.MvvmLight;
 using System.Globalization;
-using PoliceSoft.Aquas.Model.Initializer.Models;
+using EvAlex.AwesomeEfMigrator.Models;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.Windows.Controls;
-using PoliceSoft.Aquas.Model.Initializer.Views;
-using PoliceSoft.Aquas.Model.Initializer.Services;
+using EvAlex.AwesomeEfMigrator.Views;
+using EvAlex.AwesomeEfMigrator.Services;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Ioc;
-using PoliceSoft.Aquas.Model.Initializer.Messages;
+using EvAlex.AwesomeEfMigrator.Messages;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
+namespace EvAlex.AwesomeEfMigrator.ViewModel
 {
 	/// <summary>
 	/// This class contains properties that the main View can data bind to.

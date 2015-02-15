@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Models
+namespace EvAlex.AwesomeEfMigrator.Models
 {
 	public class Database : TreeViewItemModel
 	{

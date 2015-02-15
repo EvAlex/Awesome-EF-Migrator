@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Models
+namespace EvAlex.AwesomeEfMigrator.Models
 {
 	public class DbType
 	{

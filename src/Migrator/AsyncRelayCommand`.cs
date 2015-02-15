@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.CommandWpf;
 
-namespace PoliceSoft.Aquas.Model.Initializer
+namespace EvAlex.AwesomeEfMigrator
 {
 	public class AsyncRelayCommand<T> : RelayCommand<T>, INotifyPropertyChanged
 	{

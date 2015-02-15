@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Messages
+namespace EvAlex.AwesomeEfMigrator.Messages
 {
 	public class DialogClosedMessage<TDialog>
 	{

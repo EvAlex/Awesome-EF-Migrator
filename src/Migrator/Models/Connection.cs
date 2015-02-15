@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Models
+namespace EvAlex.AwesomeEfMigrator.Models
 {
 	/// <summary>
 	/// Represents Data Source in connection string

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
-using PoliceSoft.Aquas.Model.Initializer.Messages;
+using EvAlex.AwesomeEfMigrator.Messages;
 
-namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
+namespace EvAlex.AwesomeEfMigrator.ViewModel
 {
 	public class ErrorDialogViewModel : ViewModelBase
 	{

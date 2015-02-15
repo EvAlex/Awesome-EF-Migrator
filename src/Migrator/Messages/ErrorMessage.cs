@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Messages
+namespace EvAlex.AwesomeEfMigrator.Messages
 {
 	public class ErrorMessage : ObservableObject
 	{

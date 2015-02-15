@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceSoft.Aquas.Model.Initializer
+namespace EvAlex.AwesomeEfMigrator
 {
 	public class AwesomeEfMigratorConfigBuilder
 	{

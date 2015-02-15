@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Views
+namespace EvAlex.AwesomeEfMigrator.Views
 {
 	interface IErrorDialog : IDialog
 	{

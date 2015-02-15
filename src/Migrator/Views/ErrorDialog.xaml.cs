@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Views
+namespace EvAlex.AwesomeEfMigrator.Views
 {
 	/// <summary>
 	/// Interaction logic for ErrorDialog.xaml

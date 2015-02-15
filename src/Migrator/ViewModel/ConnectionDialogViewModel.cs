@@ -12,17 +12,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using GalaSoft.MvvmLight;
-using PoliceSoft.Aquas.Model.Initializer.Models;
-using PoliceSoft.Aquas.Model.Initializer.Services;
+using EvAlex.AwesomeEfMigrator.Models;
+using EvAlex.AwesomeEfMigrator.Services;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight.CommandWpf;
-using PoliceSoft.Aquas.Model.Initializer.Views;
+using EvAlex.AwesomeEfMigrator.Views;
 using GalaSoft.MvvmLight.Messaging;
-using PoliceSoft.Aquas.Model.Initializer.Messages;
+using EvAlex.AwesomeEfMigrator.Messages;
 using GalaSoft.MvvmLight.Ioc;
 using System.Threading;
 
-namespace PoliceSoft.Aquas.Model.Initializer.ViewModel
+namespace EvAlex.AwesomeEfMigrator.ViewModel
 {
 	public class ConnectionDialogViewModel : ViewModelBase
 	{

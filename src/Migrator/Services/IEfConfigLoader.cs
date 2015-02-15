@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PoliceSoft.Aquas.Model.Initializer.Services
+namespace EvAlex.AwesomeEfMigrator.Services
 {
 	public interface IEfConfigLoader
 	{

@@ -1,4 +1,4 @@
-﻿namespace PoliceSoft.Aquas.Model.Initializer.Models
+﻿namespace EvAlex.AwesomeEfMigrator.Models
 {
 	public class TableColumn : TreeViewItemModel
 	{
